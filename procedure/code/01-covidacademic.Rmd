@@ -1,0 +1,675 @@
+---
+title: "COVID-19 Academic Patterns"
+author: "Emily Zhou"
+date: "12/8/2021"
+output: html_document
+---
+
+## Set up environment
+
+```{r setup, message = FALSE, warning = FALSE}
+
+# list of required packages
+packages <- c( "tidyverse", "ggplot2", "lubridate", "dplyr", "ggsci", "RISmed", "stringr", "devEMF", "plotly", "rjson", "bibliometrix", "pubmedR", "here")
+
+# load required packages
+package.check <- lapply(
+  packages,
+  FUN = function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE, quietly=TRUE)
+      library(x, character.only = TRUE)
+    }
+  }
+)
+
+# save the r processing environment
+writeLines(capture.output(sessionInfo()),here("procedure","environment","r_environment.txt"))
+
+```
+
+
+## Load required functions
+
+```{r fetch article data using RISmed package}
+
+searchF <- function(search_topic_TopicSpecified){
+  search_query <- EUtilsSummary(search_topic_TopicSpecified,  retmax = 9999)
+  summary(search_query)
+  Sys.sleep(3)
+  records <- EUtilsGet(search_query)
+  return(records)
+}
+
+```
+
+
+```{r arrange new search result into dataframe}
+# only use when getting your own results
+rismedextract <- function(records){
+  pubmed_data_full <- data.frame('PMID'=as.character(PMID(records)),
+                                 'DayAccepted' = DayAccepted(records),
+                                 'MonthAccepted' = MonthAccepted(records),
+                                 'YearAccepted' = YearAccepted(records),
+                                 'DayReceived' = DayReceived(records),
+                                 'MonthReceived' = MonthReceived(records),
+                                 'YearReceived' = YearReceived(records),
+                                 'Journal' = Title(records),
+                                 'PublicationStatus' = PublicationStatus(records),
+                                 'Country' = Country(records),
+                                 'Language' = Language(records)
+                
+  )
+  pubmed_data_full <- pubmed_data_full %>%
+    mutate(YMD_Accepted = ymd(paste(YearAccepted,MonthAccepted, DayAccepted))) %>%
+    mutate(YMD_Received = ymd(paste(YearReceived,MonthReceived, DayReceived))) 
+  return(pubmed_data_full)
+}
+```
+
+
+```{r arrange loaded search result into readable format}
+# only use when loading existing result
+rismedextract_rp <- function(records){
+  pubmed_data_full <- with(records, data.frame('PMID'= as.character(PMID),
+                                               'DayAccepted' = DayAccepted,
+                                               'MonthAccepted' = MonthAccepted,
+                                               'YearAccepted' = YearAccepted,
+                                               'DayReceived' = DayReceived,
+                                               'MonthReceived' = MonthReceived,
+                                               'YearReceived' = YearReceived,
+                                               'Journal' = Journal,
+                                               'PublicationStatus' = PublicationStatus,
+                                               'Country' = Country,
+                                               'Language' = Language
+                                               ))
+  pubmed_data_full <- pubmed_data_full %>%
+  mutate(YMD_Accepted = ymd(paste(YearAccepted,MonthAccepted, DayAccepted))) %>%
+  mutate(YMD_Received = ymd(paste(YearReceived,MonthReceived, DayReceived))) 
+  return(pubmed_data_full)
+}
+```
+
+
+```{r calculate the submission to publication time}
+sptime <- function(pm){
+  
+  pm <- pm[!is.na(pm$YMD_Accepted),]
+  pm <- pm[!is.na(pm$YMD_Received),]
+  pm <- pm %>%  mutate(InReview =  YMD_Accepted - YMD_Received)
+  
+  pm$JournalCount <- table(pm$Journal)[pm$Journal]  
+  
+  return(pm)
+}
+```
+
+
+```{r calculate the number of authors}
+AuthorCountF <- function(x){
+  c <- c()
+  for (i in 1:length(x)){
+    c[i] <- length(unlist(str_split(x[[i]], ";")))
+  }
+  return(c)
+}
+```
+
+
+```{r calculate the number of affiliations}
+
+AffiliationCountF <- function(x){
+  c <- c()
+  for (i in 1:length(x)){
+    c[i] <- length(unlist(str_split(x[[i]], ";")))
+  }
+  return(c)
+}
+
+```
+
+
+```{r}
+countryF <- function(x){
+  for (i in 1:dim(x)[1]){
+    af <- unlist(str_split(x$AU_UN[i], ";"))
+    x$duplicated[i] <- TRUE %in% duplicated(af)
+    for (j in af){
+      
+    }
+  }
+}
+```
+
+
+```{r set the theme for plots}
+tema <- theme_bw() + theme( plot.subtitle = element_text(vjust = 1), 
+                            plot.caption = element_text(vjust = 1), 
+                            panel.grid.major = element_blank(), 
+                            panel.grid.minor = element_blank(), 
+                            axis.title = element_text(size = 9), 
+                            axis.text = element_text(size = 8, colour = "black"), 
+                            panel.background = element_rect(fill = NA),
+                            panel.border = element_rect(linetype = "solid", fill = NA, size = 1)
+                            
+)
+
+
+theme_set(tema)
+
+```
+
+
+## Load, fetch, and write data
+
+### Reproduction
+
+Run the code below to load the results provided by Homolak and reproduce the original analysis.
+
+```{r load-original}
+
+# load article data fetched from pubmed using RISmed package
+records1<- read.csv(here("data", "raw", "public", "reproduction", "search1rismed.csv"))
+records2<- read.csv(here("data", "raw", "public", "reproduction", "search2rismed.csv"))
+records3<- read.csv(here("data", "raw", "public", "reproduction", "search3rismed.csv"))
+records4<- read.csv(here("data", "raw", "public", "reproduction", "search4rismed.csv"))
+records5<- read.csv(here("data", "raw", "public", "reproduction", "search5rismed.csv"))
+
+
+# load article data fetched from pubmed using pubmedR package
+df1<- read.csv(here("data", "raw", "public", "reproduction", "search1pubmedr.csv"))
+df2<- read.csv(here("data", "raw", "public", "reproduction", "search2pubmedr.csv"))
+df3<- read.csv(here("data", "raw", "public", "reproduction", "search3pubmedr.csv"))
+df4<- read.csv(here("data", "raw", "public", "reproduction", "search4pubmedr.csv"))
+df5<- read.csv(here("data", "raw", "public", "reproduction", "search5pubmedr.csv"))
+
+
+# load rxiv preprint server
+
+json <- fromJSON(file = here("data", "raw", "public", "reproduction", "article_list.json"))
+
+# load scopus
+
+M <- convert2df(here("data", "raw", "public", "reproduction", "scopus20411.bib"), dbsource = "scopus", format = "bibtex")
+
+
+```
+
+
+```{r}
+pm1 <- rismedextract_rp(records1)
+pm2 <- rismedextract_rp(records2)
+pm3 <- rismedextract_rp(records3)
+pm4 <- rismedextract_rp(records4)
+pm5 <- rismedextract_rp(records5)
+```
+
+
+```{r}
+dfrxiv <- data.frame("rxiv_date" = c(NA), "injournal" = c(NA), "rxiv_site" = c(NA), 
+                 "J_received" = c(NA), "J_accepted" = c(NA), "J_published" = c(NA),
+                 "journal" = c(NA), "doi" = c(NA))
+```
+
+
+### Replication 
+
+Run the code below to get the most updated results and replicate the analysis. 
+
+```{r}
+
+search1 <- '(COVID-19) AND (Case Reports[Publication Type] OR English Abstract[Publication Type] OR Guideline[Publication Type] OR Journal Article[Publication Type] OR Multicenter Study[Publication Type] OR Review[Publication Type])'
+
+search1atime <- Sys.time()
+records1 <- searchF(search1)
+
+pubmed1 <- pmApiRequest(search1, limit=8000, api_key = NULL) ## insert API key
+df1 <- pmApi2df(pubmed1, format = "bibliometrix")
+```
+
+
+```{r}
+
+search2 <- 'COVID-19'
+
+search2atime <- Sys.time()
+records2 <- searchF(search2)
+
+search2btime <- Sys.time()
+pubmed2 <- pmApiRequest(search2, limit=8000, api_key = NULL) ## insert API key
+df2 <- pmApi2df(pubmed2, format = "bibliometrix")
+
+```
+
+
+```{r}
+
+search3 <- '("2019/12/01"[Date - Publication] : "2020/12/12"[Date - Publication]) AND (COVID-19) AND ("International journal of antimicrobial agents"[Journal] OR "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases"[Journal] OR "Journal of clinical medicine"[Journal] OR "Journal of Korean medical science"[Journal] OR "Journal of medical virology"[Journal] OR "Journal of microbiology, immunology, and infection = Wei mian yu gan ran za zhi"[Journal] OR "Journal of the American Academy of Dermatology"[Journal] OR "Lancet (London, England)"[Journal] OR "The Journal of hospital infection"[Journal] OR "The Journal of infection"[Journal] OR "The Lancet. Infectious diseases"[Journal] OR "The Lancet. Public health"[Journal] OR "The Lancet. Respiratory medicine"[Journal] OR "Travel medicine and infectious disease"[Journal])'
+
+search3atime <- Sys.time()
+records3 <- searchF(search3)
+
+
+search3btime <- Sys.time()
+pubmed3 <- pmApiRequest(search3, limit=8000, api_key = NULL) ## insert API key
+df3 <- pmApi2df(pubmed3, format = "bibliometrix")
+
+```
+
+
+```{r}
+
+search4 <- '("2018/12/01"[Date - Publication] : "2019/04/11"[Date - Publication]) AND ("International journal of antimicrobial agents"[Journal] OR "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases"[Journal] OR "Journal of clinical medicine"[Journal] OR "Journal of Korean medical science"[Journal] OR "Journal of medical virology"[Journal] OR "Journal of microbiology, immunology, and infection = Wei mian yu gan ran za zhi"[Journal] OR "Journal of the American Academy of Dermatology"[Journal] OR "Lancet (London, England)"[Journal] OR "The Journal of hospital infection"[Journal] OR "The Journal of infection"[Journal] OR "The Lancet. Infectious diseases"[Journal] OR "The Lancet. Public health"[Journal] OR "The Lancet. Respiratory medicine"[Journal] OR "Travel medicine and infectious disease"[Journal])'
+search4atime <- Sys.time()
+records4 <- searchF(search4)
+
+search4btime <- Sys.time()
+pubmed4 <- pmApiRequest(search4, limit=5000, api_key = NULL) ## insert API key
+df4 <- pmApi2df(pubmed4, format = "bibliometrix")
+
+```
+
+
+```{r}
+
+search5 <- '("International journal of antimicrobial agents"[Journal] OR "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases"[Journal] OR "Journal of clinical medicine"[Journal] OR "Journal of Korean medical science"[Journal] OR "Journal of medical virology"[Journal] OR "Journal of microbiology, immunology, and infection = Wei mian yu gan ran za zhi"[Journal] OR "Journal of the American Academy of Dermatology"[Journal] OR "Lancet (London, England)"[Journal] OR "The Journal of hospital infection"[Journal] OR "The Journal of infection"[Journal] OR "The Lancet. Infectious diseases"[Journal] OR "The Lancet. Public health"[Journal] OR "The Lancet. Respiratory medicine"[Journal] OR "Travel medicine and infectious disease"[Journal]) AND ("2019/12/01"[Date - Publication] : "2020/12/12"[Date - Publication]) NOT (COVID-19)'
+
+search5atime <- Sys.time()
+records5 <- searchF(search5)
+
+search5btime <- Sys.time()
+pubmed5 <- pmApiRequest(search5, limit=9999, api_key = NULL) ## insert API key
+df5 <- pmApi2df(pubmed5, format = "bibliometrix")
+
+
+```
+
+
+```{r}
+pm1 <- rismedextract(records1_re)
+pm2 <- rismedextract(records2_re)
+pm3 <- rismedextract(records3_re)
+pm4 <- rismedextract(records4_re)
+pm5 <- rismedextract(records5_re)
+```
+
+
+```{r}
+write.csv(pm1, here::here("data", "raw", "public", "replication", "search1rismed.csv"))
+write.csv(pm2, here::here("data", "raw", "public", "replication", "search2rismed.csv"))
+write.csv(pm3, here::here("data", "raw", "public", "replication", "search3rismed.csv"))
+write.csv(pm4, here::here("data", "raw", "public", "replication", "search4rismed.csv"))
+write.csv(pm5, here::here("data", "raw", "public", "replication", "search5rismed.csv"))
+
+write.csv(df1, here:here("data", "raw", "public", "replication", "search1pubmedr.csv"))
+write.csv(df2, here:here("data", "raw", "public", "replication", "search2pubmedr.csv"))
+write.csv(df3, here:here("data", "raw", "public", "replication", "search3pubmedr.csv"))
+write.csv(df4, here:here("data", "raw", "public", "replication", "search4pubmedr.csv"))
+write.csv(df5, here:here("data", "raw", "public", "replication", "search5pubmedr.csv"))
+```
+
+-- Add information on running python script 
+-- Add information on searching on scopus
+
+Alternatively, run the code below to load existing data and see this version of replication. 
+
+```{r}
+# load article data fetched from pubmed using RISmed package
+records1<- read.csv(here("data", "raw", "public", "replication", "search1rismed.csv"))
+records2<- read.csv(here("data", "raw", "public", "replication", "search2rismed.csv"))
+records3<- read.csv(here("data", "raw", "public", "replication", "search3rismed.csv"))
+records4<- read.csv(here("data", "raw", "public", "replication", "search4rismed.csv"))
+records5<- read.csv(here("data", "raw", "public", "replication", "search5rismed.csv"))
+
+
+# load article data fetched from pubmed using pubmedR package
+df1<- read.csv(here("data", "raw", "public", "replication", "search1pubmedr.csv"))
+df2<- read.csv(here("data", "raw", "public", "replication", "search2pubmedr.csv"))
+df3<- read.csv(here("data", "raw", "public", "replication", "search3pubmedr.csv"))
+df4<- read.csv(here("data", "raw", "public", "replication", "search4pubmedr.csv"))
+df5<- read.csv(here("data", "raw", "public", "replication", "search5pubmedr.csv"))
+
+
+# load rxiv preprint server
+
+json <- fromJSON(file = here("data", "raw", "public", "replication", "article_list.json"))
+
+# load
+M <- convert2df(here("data", "raw", "public", "repplication", "xxxxxxxx.bib"), dbsource = "scopus", format = "bibtex")
+```
+
+
+## Data preparation
+
+### SP time
+
+```{r submission to publication time}
+pm1sp <- sptime(pm1)
+pm2sp <- sptime(pm2)
+pm3sp <- sptime(pm3)
+pm4sp <- sptime(pm4)
+pm5sp <- sptime(pm5)
+```
+
+
+### Author count
+
+```{r count the number of a}
+au1 <- AuthorCountF(df1$AU)
+au2 <- AuthorCountF(df2$AU)
+au3 <- AuthorCountF(df3$AU)
+au4 <- AuthorCountF(df4$AU)
+au5 <- AuthorCountF(df5$AU)
+```
+
+
+```{r}
+x <- df3 %>% 
+  filter(DT == "JOURNAL ARTICLE")
+au3A <- AuthorCountF(x$AU)
+
+y <- df4 %>% 
+  filter(DT == "JOURNAL ARTICLE")
+au4A <- AuthorCountF(y$AU)
+
+z <- df5 %>% 
+  filter(DT == "JOURNAL ARTICLE")
+au5A <- AuthorCountF(z$AU)
+```
+
+
+### Afflliation count
+
+```{r}
+af1 <- AffiliationCountF(df1$AU_UN)
+af2 <- AffiliationCountF(df2$AU_UN)
+af3 <- AffiliationCountF(df3$AU_UN)
+af4 <- AffiliationCountF(df4$AU_UN)
+af5 <- AffiliationCountF(df5$AU_UN)
+```
+
+
+```{r}
+x <- df3 %>% 
+  filter(DT == "JOURNAL ARTICLE")
+af3A <- AffiliationCountF(x$AU_UN)
+
+y <- df4 %>% 
+  filter(DT == "JOURNAL ARTICLE")
+af4A <- AffiliationCountF(y$AU_UN)
+
+z <- df5 %>% 
+  filter(DT == "JOURNAL ARTICLE")
+af5A <- AffiliationCountF(z$AU_UN)
+```
+
+
+## Analysis
+
+### Accepted-received dates
+
+```{r}
+# date and number of article accepted
+ggplot(pm2sp) + 
+    geom_bar(aes(x = YMD_Accepted), inherit.aes = FALSE, fill = "Red" ,color = "Red", alpha = 0.4) + 
+    scale_x_date(limits = c(ymd("2020-01-15"),ymd("2020-03-21"))) + 
+    xlab("Date Accepted") + 
+    ylab("Count") 
+
+# date and number of article received 
+ggplot(pm2sp) + 
+    geom_bar(aes(x = YMD_Received), inherit.aes = FALSE, fill = "Blue", color = "Blue", alpha = 0.4) + 
+    scale_x_date(limits = c(ymd("2020-01-15"),ymd("2020-03-21"))) + 
+    xlab("Date Received") + 
+    ylab("Count")
+```
+### Language
+
+```{r}
+languageP <- function(pm){
+  pm$Language <- plyr::revalue(pm$Language, 
+                  c("chi"="Chinese", "eng"="English", "fre" = "French", "ger" = "German", "ita" = "Italian", "spa" = "Spanish", "por" = "Portuguese", "tur" = "Turkish", "ice" = "Icelandic"))
+  pm %>%  ggplot(aes(x = Language, fill = Language)) + geom_bar() + geom_text(aes(label =..count..), stat = "count") + coord_flip()}
+
+
+languageP(pm2)
+```
+
+### Language and country
+
+```{r}
+pmx <- pm2
+pmx$Language <- plyr::revalue(pmx$Language, 
+                             c("chi"="Chinese", "eng"="English", "fre" = "French", "ger" = "German", "ita" = "Italian", "spa" = "Spanish", "por" = "Portuguese", "tur" = "Turkish", "ice" = "Icelandic"))
+pmx$CountryCount <- table(pmx$Country)[pmx$Country]  
+
+ggplot(pmx, aes(x=reorder(Country, CountryCount), fill = Language, order=CountryCount)) + geom_bar() + coord_flip() +
+  scale_fill_simpsons()
+```
+
+### Submission to publication
+
+```{r}
+pm3sp %>% 
+  filter(JournalCount > 15) %>%
+  ggplot(aes(x = Journal, y = InReview, fill = Journal)) + 
+  geom_boxplot(outlier.shape = NA) + 
+  geom_point(position = "jitter", size = 0.1) +
+  theme(legend.position = "None") + coord_flip() +
+  ylab("SP time [days]") + theme(axis.title.y = element_blank()) + 
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 50)) + 
+  scale_y_continuous(limits = c(0,365)) + scale_fill_rickandmorty(alpha = 0.7) +
+  labs(title = "COVID-19")
+
+pm4sp %>% 
+  filter(JournalCount > 15) %>%
+  ggplot(aes(x = Journal, y = InReview, fill = Journal)) + 
+  geom_boxplot(outlier.shape = NA) + 
+  geom_point(position = "jitter", size = 0.1) +
+  theme(legend.position = "None") + coord_flip() +
+  ylab("SP time [days]") + theme(axis.title.y = element_blank()) + 
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 50)) + 
+  scale_y_continuous(limits = c(0,365)) + scale_fill_rickandmorty(alpha = 0.7) +
+  labs(title = "12/18-4/19")
+
+pm5sp %>% 
+  filter(JournalCount > 15) %>%
+  ggplot(aes(x = Journal, y = InReview, fill = Journal)) + 
+  geom_boxplot(outlier.shape = NA) + 
+  geom_point(position = "jitter", size = 0.1) +
+  theme(legend.position = "None") + coord_flip() +
+  ylab("SP time [days]") + theme(axis.title.y = element_blank()) + 
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 50)) + 
+  scale_y_continuous(limits = c(0,365)) + scale_fill_rickandmorty(alpha = 0.7)+
+  labs(title = "NOT COVID-19")
+```
+
+```{r summary statistics for publication time}
+count <- pm1sp %>%
+  group_by(Journal) %>%
+  summarise(count = n())
+summary_sp <- pm1sp %>%
+  filter(InReview < 1) %>%
+  group_by(Journal) %>%
+  summarise(n = n()) %>%
+  left_join(count, by = "Journal") %>% 
+  mutate(perc = n / count * 100)
+colnames(summary_sp) <-  c("Journal", "Peer Review < 24h", "Total Article count", "Percentage")
+```
+
+
+### Affiliation Count
+
+```{r}
+AffiliationCount <- rbind(data.frame("AffiliationCount" = af3, "Time" = "COVID-19"),
+                          data.frame("AffiliationCount" = af5, "Time" = "NOT COVID-19"),
+                          data.frame("AffiliationCount" = af4, "Time" = "Y18/19"))
+ggplot(AffiliationCount, aes(x = AffiliationCount, fill = Time, color = Time)) + 
+  geom_density(alpha = 0.1, size = 0.8) + 
+  scale_x_continuous(limits = c(NA, 40)) +
+  theme(axis.title.y = element_blank(), legend.title = element_blank()) + 
+  scale_fill_startrek() + 
+  xlab("Affiliation Count Distribution") +
+  labs(title = "All Publication Type")
+  
+```
+
+
+```{r}
+AffiliationCountA <- rbind(data.frame("AffiliationCount" = af3A, "Time" = "COVID-19"),
+                           data.frame("AffiliationCount" = af4A, "Time" = "Y18/19"),
+                           data.frame("AffiliationCount" = af5A, "Time" = "NOT COVID-19"))
+ggplot(AffiliationCountA, aes(x = AffiliationCount, fill = Time, color = Time)) + 
+  geom_density(alpha = 0.1, size = 0.8) + 
+  scale_x_continuous(limits = c(NA, 40)) +
+  theme(axis.title.y = element_blank(), legend.title = element_blank()) + 
+  scale_fill_startrek() + 
+  xlab("Affiliation Count Distribution") +
+  labs(title = "Original Research Papers")
+```
+
+```{r summary statistics}
+AffiliationCount %>%
+  group_by(Time) %>%
+  summarise(N = n(), median = median(AffiliationCount), iqr = IQR(AffiliationCount))
+
+AffiliationCountA %>%
+  group_by(Time) %>%
+  summarise(N = n(), median = median(AffiliationCount), iqr = IQR(AffiliationCount))
+```
+
+### Author Count
+
+```{r}
+AuthorCount <- rbind(data.frame("AuthorCount" = au3, "Time" = "COVID-19"),
+                     data.frame("AuthorCount" = au4, "Time" = "Y18/19"),
+                     data.frame("AuthorCount" = au5, "Time" = "NOT COVID-19"))
+ggplot(AuthorCount, aes(x = AuthorCount, fill = Time, color = Time)) + 
+  geom_density(alpha = 0.1, size = 0.8) + 
+  scale_x_continuous(limits = c(NA, 40)) +
+  theme(axis.title.y = element_blank(), legend.title = element_blank()) + 
+  scale_fill_startrek() +
+  xlab("Author Count Distribution") +
+  labs("All Publication Type")
+```
+
+
+```{r}
+AuthorCountA <- rbind(data.frame("AuthorCount" = au3A, "Time" = "COVID-19"),
+                      data.frame("AuthorCount" = au4A, "Time" = "Y18/19"),
+                     data.frame("AuthorCount" = au5A, "Time" = "NOT COVID-19"))
+ggplot(AuthorCountA, aes(x = AuthorCount, fill = Time, color = Time)) + 
+  geom_density(alpha = 0.1, size =0.8) + 
+  scale_x_continuous(limits = c(NA, 40)) +
+  theme(axis.title.y = element_blank(), legend.title = element_blank()) + 
+  scale_fill_startrek() +
+  xlab("Author Count Distribution")+
+  labs("Original Research Papers")
+```
+
+
+```{r}
+AuthorCount %>%
+  group_by(Time) %>%
+  summarise(N = n(), median = median(AuthorCount), iqr = IQR(AuthorCount))
+
+AuthorCountA %>%
+  group_by(Time) %>%
+  summarise(N = n(), median = median(AuthorCount), iqr = IQR(AuthorCount))
+```
+
+
+```{r}
+pubstatus <- rbind(
+  data.frame("PubStatus" = pm3$PublicationStatus, "Time" = "COVID-19"),
+  data.frame("PubStatus" = pm5$PublicationStatus, "Time" = "NOT COVID-19")
+)
+
+
+pubstatus$PubStatus <- plyr::revalue(pubstatus$PubStatus, 
+                                  c("aheadofprint"="Ahead of Print", "epublish"="E-publish", "ppublish" = "P-publish"))
+
+ggplot(pubstatus, aes(x = Time, fill = PubStatus)) + 
+  geom_bar(position = "fill", width = 0.7) + 
+  ylab("%") + 
+  theme(axis.title.x = element_blank()) + 
+  scale_fill_jco() + 
+  scale_y_continuous(labels = scales::percent) +
+  theme(axis.title = element_blank(), legend.title = element_blank(), legend.position = "top", legend.direction = "horizontal")
+```
+
+### Jounral publication
+
+```{r}
+for (i in json){
+  if(is.null(i$journal_date_received)){
+    NA
+  } else {  i$journal_date_received }
+  dfrxiv <- rbind(dfrxiv, data.frame("rxiv_date" =  i$rxiv_date, "injournal" = !is.null(i$journal_doi),
+                             "rxiv_site" = i$rxiv_site, 
+                             "J_received" =   if(is.null(i$journal_date_received)){NA} else { i$journal_date_received }, 
+                             "J_accepted" = if(is.null(i$journal_date_accepted)){NA} else { i$journal_date_accepted }, 
+                             "J_published" = if(is.null(i$journal_date_published)){NA} else { i$journal_date_published },
+                             "journal" = if(is.null(i$journal)){NA} else { i$journal },
+                             "doi" = if(is.null(i$journal_doi)){NA} else { i$journal_doi }))
+}
+
+dfrxiv<- dfrxiv[-1,]
+
+dfrxiv$rxiv_date <- lubridate::ymd(dfrxiv$rxiv_date)
+
+dfrxiv$injournal <- factor(dfrxiv$injournal)
+dfrxiv$injournal <- plyr::revalue(dfrxiv$injournal, 
+                             c("TRUE"="Published in Journal", "FALSE"="Not Published in Journal"))
+```
+
+
+```{r}
+ggplot(dfrxiv, aes(x = rxiv_date, fill = injournal)) + geom_bar() + 
+  scale_x_date(limits = c(ymd("2020-01-10"), NA)) + scale_fill_startrek() +
+  theme(legend.title = element_blank(), legend.position = "top", legend.direction = "horizontal") + xlab("Date") + ylab("Count")
+```
+
+### Single & multiple country publication
+
+```{r}
+M <- M %>%
+  filter(DT == "ARTICLE")
+
+results_bib <- biblioAnalysis(M, sep = ";")
+
+options(width=100)
+
+S <- summary(object = results_bib, k = 20, pause = FALSE)
+
+```
+
+
+```{r}
+plot_list <- plot(x = results_bib, k = 10, pause = FALSE)
+
+plot_list$MostProdCountries + scale_fill_startrek() + theme_bw() +
+  theme(legend.title = element_blank(), plot.title = element_blank(),
+         axis.title.y = element_blank(),
+         plot.caption = element_blank(),
+         plot.subtitle = element_text(vjust = 1),
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         axis.text = element_text(size = 8, colour = "black"),
+         panel.background = element_rect(fill = NA)) +
+  ylab("Published papers")
+
+```
+
+```{r}
+biblioshiny()
+
+
+usporedba <- rbind(data.frame("DB" = "rXiv", "N" = dim(dfrxiv)[1]),
+                   data.frame("DB" = "PubMed", "N" = dim(df1)[1]),
+                   data.frame("DB" = "Scopus", "N" = dim(M)[1]))
+
+usporedbap <- ggplot(usporedba, aes(x = DB, y = N, fill = DB)) + geom_col() + scale_fill_startrek() +
+  ylab("Count") + theme(axis.title.x = element_blank(), legend.title = element_blank())
+```
+
