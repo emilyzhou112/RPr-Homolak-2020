@@ -6,6 +6,7 @@ import time
 import dateutil.parser as dparser
 import selenium
 from selenium import webdriver
+from selenium.webdriver.firefox.service import Service
 from webdriver_manager.firefox import GeckoDriverManager
 
 
@@ -37,7 +38,8 @@ def find_date(s, x):
     else:
         return out
 
-gecko = webdriver.Firefox(executable_path=GeckoDriverManager().install())
+#gecko = webdriver.Firefox()
+gecko = webdriver.Firefox(service=Service(GeckoDriverManager().install()))
 
 
 ## Opens the json of the "COVID-19 SARS-CoV-2 preprints from medRxiv and bioRxiv" collection.
@@ -59,7 +61,8 @@ article_template = {
     "journal_date_received": None,
     "journal_date_accepted": None,
     "journal_date_published": None,
-    "journal_url": None
+    "journal_url": None,
+    "abstract":""
 }
 
 ## Template for the metadata of a single author. One list of multiple author dicts
@@ -101,6 +104,7 @@ for i in range(len(rxiv_articlelist)):
     article["rxiv_url"] = rxiv_json.get("rel_link")
     article["rxiv_date"] = rxiv_json.get("rel_date")
     article["rxiv_site"] = rxiv_json.get("rel_site")
+    article["abstract"] = rxiv_json.get("rel_abs")
     
     ## Article affiliations are retrieved from the regular article rxiv URL.
     gecko.get(str(article.get("rxiv_url"))+".article-info")
@@ -201,8 +205,8 @@ for i in range(len(rxiv_articlelist)):
     author_list[i] = article_authors
 
 ## The lists are dumped into their respective json files.
-with open("author_list_rp.json", "w") as f: 
+with open("author_list.json", "w") as f: 
     json.dump(author_list, f)
 
-with open("article_list_rp.json", "w") as f:
+with open("article_list.json", "w") as f:
     json.dump(article_list, f)

@@ -32,9 +32,9 @@ writeLines(capture.output(sessionInfo()),here("procedure","environment","r_envir
 ## Load required functions
 
 ```{r fetch article data using RISmed package}
-
+# need to talk about the problem of code here
 searchF <- function(search_topic_TopicSpecified){
-  search_query <- EUtilsSummary(search_topic_TopicSpecified,  retmax = 9999)
+  search_query <- EUtilsSummary(search_topic_TopicSpecified,  retmax = 4000) # change to 9999, 4000 only for 2, 3, search to avoid subscript out of bound error
   summary(search_query)
   Sys.sleep(3)
   records <- EUtilsGet(search_query)
@@ -54,7 +54,7 @@ rismedextract <- function(records){
                                  'DayReceived' = DayReceived(records),
                                  'MonthReceived' = MonthReceived(records),
                                  'YearReceived' = YearReceived(records),
-                                 'Journal' = Title(records),
+                                 'Journal' = ISOAbbreviation(records), # Note the change here from title to ISO Abbreviation
                                  'PublicationStatus' = PublicationStatus(records),
                                  'Country' = Country(records),
                                  'Language' = Language(records)
@@ -221,19 +221,19 @@ Run the code below to get the most updated results and replicate the analysis.
 search1 <- '(COVID-19) AND (Case Reports[Publication Type] OR English Abstract[Publication Type] OR Guideline[Publication Type] OR Journal Article[Publication Type] OR Multicenter Study[Publication Type] OR Review[Publication Type])'
 
 search1atime <- Sys.time()
-records1 <- searchF(search1)
+records1 <- searchF(search1) # 167363
 
 pubmed1 <- pmApiRequest(search1, limit=8000, api_key = NULL) ## insert API key
 df1 <- pmApi2df(pubmed1, format = "bibliometrix")
 ```
 
-
+4000
 ```{r}
 
 search2 <- 'COVID-19'
 
 search2atime <- Sys.time()
-records2 <- searchF(search2)
+records2 <- searchF(search2) #204112
 
 search2btime <- Sys.time()
 pubmed2 <- pmApiRequest(search2, limit=8000, api_key = NULL) ## insert API key
@@ -244,10 +244,10 @@ df2 <- pmApi2df(pubmed2, format = "bibliometrix")
 
 ```{r}
 
-search3 <- '("2019/12/01"[Date - Publication] : "2020/12/12"[Date - Publication]) AND (COVID-19) AND ("International journal of antimicrobial agents"[Journal] OR "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases"[Journal] OR "Journal of clinical medicine"[Journal] OR "Journal of Korean medical science"[Journal] OR "Journal of medical virology"[Journal] OR "Journal of microbiology, immunology, and infection = Wei mian yu gan ran za zhi"[Journal] OR "Journal of the American Academy of Dermatology"[Journal] OR "Lancet (London, England)"[Journal] OR "The Journal of hospital infection"[Journal] OR "The Journal of infection"[Journal] OR "The Lancet. Infectious diseases"[Journal] OR "The Lancet. Public health"[Journal] OR "The Lancet. Respiratory medicine"[Journal] OR "Travel medicine and infectious disease"[Journal])'
+search3 <- '("2019/12/01"[Date - Publication] : "2021/12/12"[Date - Publication]) AND (COVID-19) AND ("International journal of antimicrobial agents"[Journal] OR "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases"[Journal] OR "Journal of clinical medicine"[Journal] OR "Journal of Korean medical science"[Journal] OR "Journal of medical virology"[Journal] OR "Journal of microbiology, immunology, and infection = Wei mian yu gan ran za zhi"[Journal] OR "Journal of the American Academy of Dermatology"[Journal] OR "Lancet (London, England)"[Journal] OR "The Journal of hospital infection"[Journal] OR "The Journal of infection"[Journal] OR "The Lancet. Infectious diseases"[Journal] OR "The Lancet. Public health"[Journal] OR "The Lancet. Respiratory medicine"[Journal] OR "Travel medicine and infectious disease"[Journal])'
 
 search3atime <- Sys.time()
-records3 <- searchF(search3)
+records3 <- searchF(search3) #7123
 
 
 search3btime <- Sys.time()
@@ -259,9 +259,9 @@ df3 <- pmApi2df(pubmed3, format = "bibliometrix")
 
 ```{r}
 
-search4 <- '("2018/12/01"[Date - Publication] : "2019/04/11"[Date - Publication]) AND ("International journal of antimicrobial agents"[Journal] OR "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases"[Journal] OR "Journal of clinical medicine"[Journal] OR "Journal of Korean medical science"[Journal] OR "Journal of medical virology"[Journal] OR "Journal of microbiology, immunology, and infection = Wei mian yu gan ran za zhi"[Journal] OR "Journal of the American Academy of Dermatology"[Journal] OR "Lancet (London, England)"[Journal] OR "The Journal of hospital infection"[Journal] OR "The Journal of infection"[Journal] OR "The Lancet. Infectious diseases"[Journal] OR "The Lancet. Public health"[Journal] OR "The Lancet. Respiratory medicine"[Journal] OR "Travel medicine and infectious disease"[Journal])'
+search4 <- '("2017/12/01"[Date - Publication] : "2019/11/30"[Date - Publication]) AND ("International journal of antimicrobial agents"[Journal] OR "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases"[Journal] OR "Journal of clinical medicine"[Journal] OR "Journal of Korean medical science"[Journal] OR "Journal of medical virology"[Journal] OR "Journal of microbiology, immunology, and infection = Wei mian yu gan ran za zhi"[Journal] OR "Journal of the American Academy of Dermatology"[Journal] OR "Lancet (London, England)"[Journal] OR "The Journal of hospital infection"[Journal] OR "The Journal of infection"[Journal] OR "The Lancet. Infectious diseases"[Journal] OR "The Lancet. Public health"[Journal] OR "The Lancet. Respiratory medicine"[Journal] OR "Travel medicine and infectious disease"[Journal])'
 search4atime <- Sys.time()
-records4 <- searchF(search4)
+records4 <- searchF(search4) # 14390
 
 search4btime <- Sys.time()
 pubmed4 <- pmApiRequest(search4, limit=5000, api_key = NULL) ## insert API key
@@ -272,12 +272,12 @@ df4 <- pmApi2df(pubmed4, format = "bibliometrix")
 
 ```{r}
 
-search5 <- '("International journal of antimicrobial agents"[Journal] OR "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases"[Journal] OR "Journal of clinical medicine"[Journal] OR "Journal of Korean medical science"[Journal] OR "Journal of medical virology"[Journal] OR "Journal of microbiology, immunology, and infection = Wei mian yu gan ran za zhi"[Journal] OR "Journal of the American Academy of Dermatology"[Journal] OR "Lancet (London, England)"[Journal] OR "The Journal of hospital infection"[Journal] OR "The Journal of infection"[Journal] OR "The Lancet. Infectious diseases"[Journal] OR "The Lancet. Public health"[Journal] OR "The Lancet. Respiratory medicine"[Journal] OR "Travel medicine and infectious disease"[Journal]) AND ("2019/12/01"[Date - Publication] : "2020/12/12"[Date - Publication]) NOT (COVID-19)'
+search5 <- '("International journal of antimicrobial agents"[Journal] OR "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases"[Journal] OR "Journal of clinical medicine"[Journal] OR "Journal of Korean medical science"[Journal] OR "Journal of medical virology"[Journal] OR "Journal of microbiology, immunology, and infection = Wei mian yu gan ran za zhi"[Journal] OR "Journal of the American Academy of Dermatology"[Journal] OR "Lancet (London, England)"[Journal] OR "The Journal of hospital infection"[Journal] OR "The Journal of infection"[Journal] OR "The Lancet. Infectious diseases"[Journal] OR "The Lancet. Public health"[Journal] OR "The Lancet. Respiratory medicine"[Journal] OR "Travel medicine and infectious disease"[Journal]) AND ("2019/12/01"[Date - Publication] : "2021/12/12"[Date - Publication]) NOT (COVID-19)'
 
 search5atime <- Sys.time()
 records5 <- searchF(search5)
 
-search5btime <- Sys.time()
+search5btime <- Sys.time() # 19190
 pubmed5 <- pmApiRequest(search5, limit=9999, api_key = NULL) ## insert API key
 df5 <- pmApi2df(pubmed5, format = "bibliometrix")
 
@@ -286,30 +286,47 @@ df5 <- pmApi2df(pubmed5, format = "bibliometrix")
 
 
 ```{r}
-pm1 <- rismedextract(records1_re)
-pm2 <- rismedextract(records2_re)
-pm3 <- rismedextract(records3_re)
-pm4 <- rismedextract(records4_re)
-pm5 <- rismedextract(records5_re)
+pm1 <- rismedextract(records1)
+pm2 <- rismedextract(records2)
+pm3 <- rismedextract(records3)
+pm4 <- rismedextract(records4)
+pm5 <- rismedextract(records5)
 ```
 
 
 ```{r}
-write.csv(pm1, here::here("data", "raw", "public", "replication", "search1rismed.csv"))
-write.csv(pm2, here::here("data", "raw", "public", "replication", "search2rismed.csv"))
-write.csv(pm3, here::here("data", "raw", "public", "replication", "search3rismed.csv"))
-write.csv(pm4, here::here("data", "raw", "public", "replication", "search4rismed.csv"))
-write.csv(pm5, here::here("data", "raw", "public", "replication", "search5rismed.csv"))
+write.csv(pm1, here("data", "raw", "public", "replication", "search1rismed.csv"))
+write.csv(pm2, here("data", "raw", "public", "replication", "search2rismed.csv"))
+write.csv(pm3, here("data", "raw", "public", "replication", "search3rismed.csv"))
+write.csv(pm4, here("data", "raw", "public", "replication", "search4rismed.csv"))
+write.csv(pm5, here("data", "raw", "public", "replication", "search5rismed.csv"))
 
-write.csv(df1, here:here("data", "raw", "public", "replication", "search1pubmedr.csv"))
-write.csv(df2, here:here("data", "raw", "public", "replication", "search2pubmedr.csv"))
-write.csv(df3, here:here("data", "raw", "public", "replication", "search3pubmedr.csv"))
-write.csv(df4, here:here("data", "raw", "public", "replication", "search4pubmedr.csv"))
-write.csv(df5, here:here("data", "raw", "public", "replication", "search5pubmedr.csv"))
+write.csv(df1, here("data", "raw", "public", "replication", "search1pubmedr.csv"))
+write.csv(df2, here("data", "raw", "public", "replication", "search2pubmedr.csv"))
+write.csv(df3, here("data", "raw", "public", "replication", "search3pubmedr.csv"))
+write.csv(df4, here("data", "raw", "public", "replication", "search4pubmedr.csv"))
+write.csv(df5, here("data", "raw", "public", "replication", "search5pubmedr.csv"))
 ```
 
--- Add information on running python script 
+-- Add information on running python script, mention how the biorxiv api works
+
+```{r}
+json <- fromJSON(file = here("data", "raw", "public", "replication", "article_list.json"))
+```
+
+
+```{r}
+dfrxiv <- data.frame("title" = c(NA),"rxiv_date" = c(NA), "injournal" = c(NA), "rxiv_site" = c(NA), 
+                 "J_received" = c(NA), "J_accepted" = c(NA), "J_published" = c(NA),
+                 "journal" = c(NA), "doi" = c(NA), "abstract" = c(NA)) # new addition
+```
+
 -- Add information on searching on scopus
+
+```{r}
+M <- convert2df(here("data", "raw", "public", "replication", "scopus.bib"), dbsource = "scopus", format = "bibtex")
+```
+
 
 Alternatively, run the code below to load existing data and see this version of replication. 
 
@@ -335,7 +352,7 @@ df5<- read.csv(here("data", "raw", "public", "replication", "search5pubmedr.csv"
 json <- fromJSON(file = here("data", "raw", "public", "replication", "article_list.json"))
 
 # load
-M <- convert2df(here("data", "raw", "public", "repplication", "xxxxxxxx.bib"), dbsource = "scopus", format = "bibtex")
+M <- convert2df(here("data", "raw", "public", "replication", "scopus.bib"), dbsource = "scopus", format = "bibtex")
 ```
 
 
@@ -378,7 +395,7 @@ au5A <- AuthorCountF(z$AU)
 ```
 
 
-### Afflliation count
+### Affiliation count
 
 ```{r}
 af1 <- AffiliationCountF(df1$AU_UN)
@@ -412,14 +429,14 @@ af5A <- AffiliationCountF(z$AU_UN)
 # date and number of article accepted
 ggplot(pm2sp) + 
     geom_bar(aes(x = YMD_Accepted), inherit.aes = FALSE, fill = "Red" ,color = "Red", alpha = 0.4) + 
-    scale_x_date(limits = c(ymd("2020-01-15"),ymd("2020-03-21"))) + 
+    scale_x_date(limits = c(ymd("2021-09-10"),ymd("2021-12-10"))) + 
     xlab("Date Accepted") + 
     ylab("Count") 
 
 # date and number of article received 
 ggplot(pm2sp) + 
     geom_bar(aes(x = YMD_Received), inherit.aes = FALSE, fill = "Blue", color = "Blue", alpha = 0.4) + 
-    scale_x_date(limits = c(ymd("2020-01-15"),ymd("2020-03-21"))) + 
+    scale_x_date(limits = c(ymd("2021-09-10"),ymd("2021-12-10"))) + 
     xlab("Date Received") + 
     ylab("Count")
 ```
@@ -438,6 +455,7 @@ languageP(pm2)
 ### Language and country
 
 ```{r}
+# no longer able to run for missing country data
 pmx <- pm2
 pmx$Language <- plyr::revalue(pmx$Language, 
                              c("chi"="Chinese", "eng"="English", "fre" = "French", "ger" = "German", "ita" = "Italian", "spa" = "Spanish", "por" = "Portuguese", "tur" = "Turkish", "ice" = "Icelandic"))
@@ -605,15 +623,20 @@ for (i in json){
   if(is.null(i$journal_date_received)){
     NA
   } else {  i$journal_date_received }
-  dfrxiv <- rbind(dfrxiv, data.frame("rxiv_date" =  i$rxiv_date, "injournal" = !is.null(i$journal_doi),
-                             "rxiv_site" = i$rxiv_site, 
-                             "J_received" =   if(is.null(i$journal_date_received)){NA} else { i$journal_date_received }, 
-                             "J_accepted" = if(is.null(i$journal_date_accepted)){NA} else { i$journal_date_accepted }, 
-                             "J_published" = if(is.null(i$journal_date_published)){NA} else { i$journal_date_published },
-                             "journal" = if(is.null(i$journal)){NA} else { i$journal },
-                             "doi" = if(is.null(i$journal_doi)){NA} else { i$journal_doi }))
+  
+  dfrxiv <- rbind(dfrxiv, data.frame("title" = i$title, # new addition
+                                     "rxiv_date" =  i$rxiv_date, 
+                                     "injournal" = !is.null(i$journal_doi),
+                                     "rxiv_site" = i$rxiv_site, 
+                                     "J_received" =   if(is.null(i$journal_date_received)){NA} else { i$journal_date_received }, 
+                                     "J_accepted" = if(is.null(i$journal_date_accepted)){NA} else { i$journal_date_accepted }, 
+                                     "J_published" = if(is.null(i$journal_date_published)){NA} else { i$journal_date_published },
+                                     "journal" = if(is.null(i$journal)){NA} else { i$journal },
+                                     "doi" = if(is.null(i$journal_doi)){NA} else { i$journal_doi },
+                                     "abstract" = i$abstract)) # new addition
 }
 
+# no longer able to run
 dfrxiv<- dfrxiv[-1,]
 
 dfrxiv$rxiv_date <- lubridate::ymd(dfrxiv$rxiv_date)
@@ -625,13 +648,18 @@ dfrxiv$injournal <- plyr::revalue(dfrxiv$injournal,
 
 
 ```{r}
+# no longer able to run
 ggplot(dfrxiv, aes(x = rxiv_date, fill = injournal)) + geom_bar() + 
-  scale_x_date(limits = c(ymd("2020-01-10"), NA)) + scale_fill_startrek() +
+  scale_x_date(limits = c(ymd("2021-12-01"), NA)) + scale_fill_startrek() +
   theme(legend.title = element_blank(), legend.position = "top", legend.direction = "horizontal") + xlab("Date") + ylab("Count")
 ```
 
+Consider text analysis here
+
+
 ### Single & multiple country publication
 
+Only the first 2000 documents could be exported
 ```{r}
 M <- M %>%
   filter(DT == "ARTICLE")
@@ -646,9 +674,10 @@ S <- summary(object = results_bib, k = 20, pause = FALSE)
 
 
 ```{r}
+# irreproducible due to lack of data
 plot_list <- plot(x = results_bib, k = 10, pause = FALSE)
 
-plot_list$MostProdCountries + scale_fill_startrek() + theme_bw() +
+plot_list$MostProdAuthors + scale_fill_startrek() + theme_bw() +
   theme(legend.title = element_blank(), plot.title = element_blank(),
          axis.title.y = element_blank(),
          plot.caption = element_blank(),

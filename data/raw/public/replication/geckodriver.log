@@ -1,0 +1,163 @@
+1639246100702	geckodriver	INFO	Listening on 127.0.0.1:61460
+1639246101218	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "--remote-debugging-port" "61461" "-foreground" "-no-remote" "-profile" "/var/folders/6w/ywytcwcj1k18htv7js15stvw0000gn/T/rust_mozprofile3ew69E"
+1639246101661	Marionette	INFO	Marionette enabled
+2021-12-11 13:08:22.469 firefox-bin[57042:4980127] Warning: Expected min height of view: (<NSButton: 0x13211e800>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 13:08:22.469 firefox-bin[57042:4980127] Warning: Expected min height of view: (<NSButton: 0x132122800>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 13:08:22.470 firefox-bin[57042:4980127] Warning: Expected min height of view: (<NSButton: 0x132121000>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 13:08:22.471 firefox-bin[57042:4980127] Warning: Expected min height of view: (<NSButton: 0x132122c00>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 13:08:22.471 firefox-bin[57042:4980127] Warning: Expected min height of view: (<NSButton: 0x132123c00>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 13:08:22.472 firefox-bin[57042:4980127] Warning: Expected min height of view: (<NSPopoverTouchBarItemButton: 0x132273800>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 13:08:22.472 firefox-bin[57042:4980127] Warning: Expected min height of view: (<NSPopoverTouchBarItemButton: 0x132276400>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /var/folders/6w/ywytcwcj1k18htv7js15stvw0000gn/T/rust_mozprofile3ew69E/search.json.mozlz4", (void 0)))
+console.error: BackgroundUpdate: 
+  _reasonsToNotScheduleUpdates: Failed to check for Maintenance Service Registry Key: [Exception... "Component returned failure code: 0x80004001 (NS_ERROR_NOT_IMPLEMENTED) [nsIUpdateProcessor.getServiceRegKeyExists]"  nsresult: "0x80004001 (NS_ERROR_NOT_IMPLEMENTED)"  location: "JS frame :: resource://gre/modules/BackgroundUpdate.jsm :: _reasonsToNotScheduleUpdates :: line 243"  data: no]
+DevTools listening on ws://localhost:61461/devtools/browser/063a532d-f8f5-4956-a8fb-7a4a1bcef33c
+1639246103694	Marionette	INFO	Listening on port 61468
+1639246103786	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1639246117434	Marionette	INFO	Stopped listening on port 61468
+JavaScript error: chrome://remote/content/marionette/cert.js, line 55: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1639246562557	geckodriver	INFO	Listening on 127.0.0.1:61796
+1639246563074	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "--remote-debugging-port" "61797" "-foreground" "-no-remote" "-profile" "/var/folders/6w/ywytcwcj1k18htv7js15stvw0000gn/T/rust_mozprofile8smT4G"
+1639246563588	Marionette	INFO	Marionette enabled
+2021-12-11 13:16:04.385 firefox-bin[57182:4986695] Warning: Expected min height of view: (<NSButton: 0x133e64000>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 13:16:04.386 firefox-bin[57182:4986695] Warning: Expected min height of view: (<NSButton: 0x133e65800>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 13:16:04.387 firefox-bin[57182:4986695] Warning: Expected min height of view: (<NSButton: 0x133e63c00>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 13:16:04.388 firefox-bin[57182:4986695] Warning: Expected min height of view: (<NSButton: 0x133e67000>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 13:16:04.389 firefox-bin[57182:4986695] Warning: Expected min height of view: (<NSButton: 0x133e67800>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 13:16:04.389 firefox-bin[57182:4986695] Warning: Expected min height of view: (<NSPopoverTouchBarItemButton: 0x133e67c00>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 13:16:04.390 firefox-bin[57182:4986695] Warning: Expected min height of view: (<NSPopoverTouchBarItemButton: 0x133ed4800>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /var/folders/6w/ywytcwcj1k18htv7js15stvw0000gn/T/rust_mozprofile8smT4G/search.json.mozlz4", (void 0)))
+console.error: BackgroundUpdate: 
+  _reasonsToNotScheduleUpdates: Failed to check for Maintenance Service Registry Key: [Exception... "Component returned failure code: 0x80004001 (NS_ERROR_NOT_IMPLEMENTED) [nsIUpdateProcessor.getServiceRegKeyExists]"  nsresult: "0x80004001 (NS_ERROR_NOT_IMPLEMENTED)"  location: "JS frame :: resource://gre/modules/BackgroundUpdate.jsm :: _reasonsToNotScheduleUpdates :: line 243"  data: no]
+DevTools listening on ws://localhost:61797/devtools/browser/c19f3260-e006-4e69-8d87-96a71f530b7f
+1639246565492	Marionette	INFO	Listening on port 61802
+1639246565555	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: citation_doi33 is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://c.disquscdn.com/next/embed/common.bundle.2f2f40d40785c9541a90e9086c8770a3.js, line 1: NS_ERROR_NOT_INITIALIZED: 
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+1639247044549	Marionette	INFO	Stopped listening on port 61802
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+JavaScript error: chrome://remote/content/marionette/cert.js, line 55: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1639253395683	geckodriver	INFO	Listening on 127.0.0.1:53826
+1639253396199	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "--remote-debugging-port" "53827" "-foreground" "-no-remote" "-profile" "/var/folders/6w/ywytcwcj1k18htv7js15stvw0000gn/T/rust_mozprofileKnZxvz"
+1639253396804	Marionette	INFO	Marionette enabled
+2021-12-11 15:09:57.578 firefox-bin[58007:5070974] Warning: Expected min height of view: (<NSButton: 0x12b4da000>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:09:57.578 firefox-bin[58007:5070974] Warning: Expected min height of view: (<NSButton: 0x12b4d8800>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:09:57.579 firefox-bin[58007:5070974] Warning: Expected min height of view: (<NSButton: 0x12b4d8c00>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:09:57.579 firefox-bin[58007:5070974] Warning: Expected min height of view: (<NSButton: 0x12b710400>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:09:57.580 firefox-bin[58007:5070974] Warning: Expected min height of view: (<NSButton: 0x12b714400>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:09:57.580 firefox-bin[58007:5070974] Warning: Expected min height of view: (<NSPopoverTouchBarItemButton: 0x12b711400>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:09:57.581 firefox-bin[58007:5070974] Warning: Expected min height of view: (<NSPopoverTouchBarItemButton: 0x12b719000>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /var/folders/6w/ywytcwcj1k18htv7js15stvw0000gn/T/rust_mozprofileKnZxvz/search.json.mozlz4", (void 0)))
+console.error: BackgroundUpdate: 
+  _reasonsToNotScheduleUpdates: Failed to check for Maintenance Service Registry Key: [Exception... "Component returned failure code: 0x80004001 (NS_ERROR_NOT_IMPLEMENTED) [nsIUpdateProcessor.getServiceRegKeyExists]"  nsresult: "0x80004001 (NS_ERROR_NOT_IMPLEMENTED)"  location: "JS frame :: resource://gre/modules/BackgroundUpdate.jsm :: _reasonsToNotScheduleUpdates :: line 243"  data: no]
+DevTools listening on ws://localhost:53827/devtools/browser/3f8bca4d-e207-454c-8d33-c35d07a759cd
+1639253398693	Marionette	INFO	Listening on port 53832
+1639253398766	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1639253406999	Marionette	WARN	Ignoring event 'DOMContentLoaded' because document has an invalid readyState of 'complete'.
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+1639254032746	geckodriver	INFO	Listening on 127.0.0.1:55112
+1639254033258	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "--remote-debugging-port" "55113" "-foreground" "-no-remote" "-profile" "/var/folders/6w/ywytcwcj1k18htv7js15stvw0000gn/T/rust_mozprofileuLSa1Z"
+1639254033670	Marionette	INFO	Marionette enabled
+2021-12-11 15:20:34.359 firefox-bin[58122:5079068] Warning: Expected min height of view: (<NSButton: 0x131a50400>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:20:34.360 firefox-bin[58122:5079068] Warning: Expected min height of view: (<NSButton: 0x131a51c00>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:20:34.360 firefox-bin[58122:5079068] Warning: Expected min height of view: (<NSButton: 0x131a4f400>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:20:34.361 firefox-bin[58122:5079068] Warning: Expected min height of view: (<NSButton: 0x131a50c00>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:20:34.362 firefox-bin[58122:5079068] Warning: Expected min height of view: (<NSButton: 0x131a51000>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:20:34.362 firefox-bin[58122:5079068] Warning: Expected min height of view: (<NSPopoverTouchBarItemButton: 0x131b71400>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:20:34.363 firefox-bin[58122:5079068] Warning: Expected min height of view: (<NSPopoverTouchBarItemButton: 0x131b79c00>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /var/folders/6w/ywytcwcj1k18htv7js15stvw0000gn/T/rust_mozprofileuLSa1Z/search.json.mozlz4", (void 0)))
+console.error: BackgroundUpdate: 
+  _reasonsToNotScheduleUpdates: Failed to check for Maintenance Service Registry Key: [Exception... "Component returned failure code: 0x80004001 (NS_ERROR_NOT_IMPLEMENTED) [nsIUpdateProcessor.getServiceRegKeyExists]"  nsresult: "0x80004001 (NS_ERROR_NOT_IMPLEMENTED)"  location: "JS frame :: resource://gre/modules/BackgroundUpdate.jsm :: _reasonsToNotScheduleUpdates :: line 243"  data: no]
+DevTools listening on ws://localhost:55113/devtools/browser/7daffa6e-e976-4a02-8de9-a270af1c5e6c
+1639254035503	Marionette	INFO	Listening on port 55119
+1639254035537	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1639254036625	Marionette	INFO	Stopped listening on port 53832
+JavaScript error: chrome://remote/content/marionette/cert.js, line 55: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+1639254136842	Marionette	WARN	Ignoring event 'DOMContentLoaded' because document has an invalid readyState of 'complete'.
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+1639254448230	geckodriver	INFO	Listening on 127.0.0.1:56092
+1639254448744	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "--remote-debugging-port" "56093" "-foreground" "-no-remote" "-profile" "/var/folders/6w/ywytcwcj1k18htv7js15stvw0000gn/T/rust_mozprofile4irotK"
+1639254449135	Marionette	INFO	Marionette enabled
+2021-12-11 15:27:29.828 firefox-bin[58170:5083996] Warning: Expected min height of view: (<NSButton: 0x124c88800>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:27:29.829 firefox-bin[58170:5083996] Warning: Expected min height of view: (<NSButton: 0x12eb4c800>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:27:29.829 firefox-bin[58170:5083996] Warning: Expected min height of view: (<NSButton: 0x12eb4d000>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:27:29.830 firefox-bin[58170:5083996] Warning: Expected min height of view: (<NSButton: 0x12eb4d400>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:27:29.830 firefox-bin[58170:5083996] Warning: Expected min height of view: (<NSButton: 0x12ec62400>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:27:29.831 firefox-bin[58170:5083996] Warning: Expected min height of view: (<NSPopoverTouchBarItemButton: 0x12ec5f400>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+2021-12-11 15:27:29.831 firefox-bin[58170:5083996] Warning: Expected min height of view: (<NSPopoverTouchBarItemButton: 0x12ec6d000>) to be less than or equal to 30 but got a height of 32.000000. This error will be logged once per view in violation.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /var/folders/6w/ywytcwcj1k18htv7js15stvw0000gn/T/rust_mozprofile4irotK/search.json.mozlz4", (void 0)))
+console.error: BackgroundUpdate: 
+  _reasonsToNotScheduleUpdates: Failed to check for Maintenance Service Registry Key: [Exception... "Component returned failure code: 0x80004001 (NS_ERROR_NOT_IMPLEMENTED) [nsIUpdateProcessor.getServiceRegKeyExists]"  nsresult: "0x80004001 (NS_ERROR_NOT_IMPLEMENTED)"  location: "JS frame :: resource://gre/modules/BackgroundUpdate.jsm :: _reasonsToNotScheduleUpdates :: line 243"  data: no]
+DevTools listening on ws://localhost:56093/devtools/browser/cd9164a3-8480-4ebd-9c1b-e051b1c2287d
+1639254450992	Marionette	INFO	Listening on port 56098
+1639254451112	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1639254452163	Marionette	INFO	Stopped listening on port 55119
+JavaScript error: chrome://remote/content/marionette/cert.js, line 55: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+JavaScript error: https://d33xdlntwy0kbs.cloudfront.net/cshl_custom_medrxiv.js, line 1: ReferenceError: hw_datacode_tab is not defined
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
