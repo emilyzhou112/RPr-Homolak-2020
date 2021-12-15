@@ -12,26 +12,22 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] here_1.0.1         pubmedR_0.0.3      bibliometrix_3.1.4 rjson_0.2.20       plotly_4.10.0      devEMF_4.0-2      
- [7] RISmed_2.3.0       ggsci_2.9          lubridate_1.7.10   forcats_0.5.1      stringr_1.4.0      dplyr_1.0.7       
-[13] purrr_0.3.4        readr_2.0.1        tidyr_1.1.3        tibble_3.1.4       ggplot2_3.3.5      tidyverse_1.3.1   
+ [1] SnowballC_0.7.0    tm_0.7-8           NLP_0.2-1          topicmodels_0.2-12 tidytext_0.3.2     here_1.0.1         pubmedR_0.0.3      bibliometrix_3.1.4 rjson_0.2.20      
+[10] plotly_4.10.0      devEMF_4.0-2       ggsci_2.9          lubridate_1.7.10   forcats_0.5.1      stringr_1.4.0      dplyr_1.0.7        purrr_0.3.4        readr_2.0.1       
+[19] tidyr_1.1.3        tibble_3.1.4       ggplot2_3.3.5      tidyverse_1.3.1    RISmed_2.3.0      
 
 loaded via a namespace (and not attached):
- [1] fs_1.5.0               RColorBrewer_1.1-2     httr_1.4.2             rprojroot_2.0.2        SnowballC_0.7.0       
- [6] tools_4.1.1            backports_1.2.1        DT_0.20                utf8_1.2.2             R6_2.5.1              
-[11] DBI_1.1.1              lazyeval_0.2.2         colorspace_2.0-2       withr_2.4.2            tidyselect_1.1.1      
-[16] compiler_4.1.1         factoextra_1.0.7       cli_3.0.1              rvest_1.0.1            flashClust_1.01-2     
-[21] xml2_1.3.2             scales_1.1.1           digest_0.6.27          rmarkdown_2.10         stringdist_0.9.8      
-[26] rentrez_1.2.3          pkgconfig_2.0.3        htmltools_0.5.2        FactoMineR_2.4         dbplyr_2.1.1          
-[31] fastmap_1.1.0          htmlwidgets_1.5.4      rlang_0.4.11           readxl_1.3.1           rstudioapi_0.13       
-[36] shiny_1.7.1            generics_0.1.0         rscopus_0.6.6          jsonlite_1.7.2         zip_2.2.0             
-[41] tokenizers_0.2.1       magrittr_2.0.1         leaps_3.1              Matrix_1.3-4           bibliometrixData_0.1.0
-[46] Rcpp_1.0.7             munsell_0.5.0          fansi_0.5.0            lifecycle_1.0.0        scatterplot3d_0.3-41  
-[51] stringi_1.7.4          yaml_2.2.1             MASS_7.3-54            plyr_1.8.6             grid_4.1.1            
-[56] parallel_4.1.1         promises_1.2.0.1       ggrepel_0.9.1          crayon_1.4.1           lattice_0.20-44       
-[61] haven_2.4.3            hms_1.1.1              knitr_1.34             pillar_1.6.2           igraph_1.2.8          
-[66] reprex_2.0.1           XML_3.99-0.8           glue_1.4.2             evaluate_0.14          tidytext_0.3.2        
-[71] data.table_1.14.2      modelr_0.1.8           vctrs_0.3.8            tzdb_0.1.2             httpuv_1.6.3          
-[76] cellranger_1.1.0       gtable_0.3.0           assertthat_0.2.1       openxlsx_4.2.4         xfun_0.25             
-[81] mime_0.11              xtable_1.8-4           broom_0.7.9            dimensionsR_0.0.2      janeaustenr_0.1.5     
-[86] later_1.3.0            viridisLite_0.4.0      cluster_2.1.2          ellipsis_0.3.2        
+ [1] colorspace_2.0-2       ellipsis_0.3.2         modeltools_0.2-23      rprojroot_2.0.2        fs_1.5.0               rstudioapi_0.13        dimensionsR_0.0.2     
+ [8] farver_2.1.0           rscopus_0.6.6          ggrepel_0.9.1          DT_0.20                fansi_0.5.0            xml2_1.3.2             leaps_3.1             
+[15] knitr_1.34             jsonlite_1.7.2         broom_0.7.9            cluster_2.1.2          dbplyr_2.1.1           shiny_1.7.1            rentrez_1.2.3         
+[22] compiler_4.1.1         httr_1.4.2             backports_1.2.1        assertthat_0.2.1       Matrix_1.3-4           fastmap_1.1.0          lazyeval_0.2.2        
+[29] cli_3.0.1              later_1.3.0            htmltools_0.5.2        tools_4.1.1            igraph_1.2.8           gtable_0.3.0           glue_1.4.2            
+[36] reshape2_1.4.4         FactoMineR_2.4         Rcpp_1.0.7             slam_0.1-48            cellranger_1.1.0       vctrs_0.3.8            xfun_0.25             
+[43] openxlsx_4.2.4         rvest_1.0.1            mime_0.11              lifecycle_1.0.0        XML_3.99-0.8           stringdist_0.9.8       bibliometrixData_0.1.0
+[50] factoextra_1.0.7       MASS_7.3-54            scales_1.1.1           hms_1.1.1              promises_1.2.0.1       parallel_4.1.1         RColorBrewer_1.1-2    
+[57] yaml_2.2.1             stringi_1.7.4          tokenizers_0.2.1       zip_2.2.0              rlang_0.4.11           pkgconfig_2.0.3        evaluate_0.14         
+[64] lattice_0.20-44        htmlwidgets_1.5.4      labeling_0.4.2         tidyselect_1.1.1       plyr_1.8.6             magrittr_2.0.1         R6_2.5.1              
+[71] generics_0.1.0         DBI_1.1.1              pillar_1.6.2           haven_2.4.3            withr_2.4.2            scatterplot3d_0.3-41   janeaustenr_0.1.5     
+[78] modelr_0.1.8           crayon_1.4.1           utf8_1.2.2             tzdb_0.1.2             rmarkdown_2.10         grid_4.1.1             readxl_1.3.1          
+[85] data.table_1.14.2      reprex_2.0.1           digest_0.6.27          flashClust_1.01-2      xtable_1.8-4           httpuv_1.6.3           stats4_4.1.1          
+[92] munsell_0.5.0          viridisLite_0.4.0     

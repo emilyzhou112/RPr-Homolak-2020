@@ -5,12 +5,22 @@ date: "12/8/2021"
 output: html_document
 ---
 
+# Reproduction and Replication of Preliminary analysis of COVID‐19 academic information patterns: a call for open science in the times of closed borders.  
+
+Author: Emily Zhou
+Created: Fall 2021
+
+This project intends to reproduce and replicate the study by Homolak et al(2020), which investigates how the scientific community have responded to the COVID-19 pandemic by quantifying the distribution and availability patterns of the academic information related to COVID-19. The aim of the original study is to assess the quality of the information flow and scientific collaboration under the pandemic. Here, in the reproduction part of this project, I intend to *validate the correctness of Homolak's method, code, and conclusions, fix potential errors, as well as to evaluate/improve the reproducibility of the entire study*. In the replication study, I replaced the original data with the most updated ones and ran the analysis to *compare changes in academic patterns over time*. 
+
+This R markdown document contains the code for both reproduction and replication study. **Please read the instructions carefully before running any code chunks**. The instructions will give you an idea on which code chunk to run depending on whether you want reproduce or replicate the study. It will also tell you about any modifications you have to make manually to the code if you would like to switch from reproduction study to replication study or vice versa. If not specified in particular, than the code chunk needs to be run anyway. Due to the way Homolak et al have documented their methodology, the differences in the processing environment between computers, and the changing regulations of the websites that we fetch raw data from, the original study is not fully reproducible/replicable. **Please do not run the code chunk that are labeled as "unable to run"**. 
+
+
 ## Set up environment
 
 ```{r setup, message = FALSE, warning = FALSE}
 
 # list of required packages
-packages <- c( "tidyverse", "ggplot2", "lubridate", "dplyr", "ggsci", "RISmed", "stringr", "devEMF", "plotly", "rjson", "bibliometrix", "pubmedR", "here")
+packages <- c( "tidyverse", "ggplot2", "lubridate", "dplyr", "ggsci", "RISmed", "stringr", "devEMF", "plotly", "rjson", "bibliometrix", "pubmedR", "here", "tidytext", "topicmodels", "tm")
 
 # load required packages
 package.check <- lapply(
@@ -31,10 +41,21 @@ writeLines(capture.output(sessionInfo()),here("procedure","environment","r_envir
 
 ## Load required functions
 
-```{r fetch article data using RISmed package}
-# need to talk about the problem of code here
+The `searchF` function searches for the metadata of articles published on pubmed using the RISmed package. 
+
+If you were to reproduce this study using the author's original data, *do no run this code chunk*. 
+If you were to replicate this study by collecting your own data, *keep the `retmax` parameter as 9999 for the first, fourth, and fifth search*, but *change to 4000 for the second and third search* to avoid the subscript out of bound error. 
+
+Reference for `searchF` function:
+
+- `EUtilsSummary()`: Get summary information on the results of a query for any database of the National Center for Biotechnology Information. The default for the number of record to retrieve is 1000, maximum is 10,000.
+- `EUtilsGet()`: Download results of a query for any database of the National Center for Biotechnology Information.
+
+
+```{r fetch pubmed article data using RISmed package}
+
 searchF <- function(search_topic_TopicSpecified){
-  search_query <- EUtilsSummary(search_topic_TopicSpecified,  retmax = 4000) # change to 9999, 4000 only for 2, 3, search to avoid subscript out of bound error
+  search_query <- EUtilsSummary(search_topic_TopicSpecified,  retmax = 9999) # change to  4000 only for 2, 3, search
   summary(search_query)
   Sys.sleep(3)
   records <- EUtilsGet(search_query)
@@ -44,9 +65,15 @@ searchF <- function(search_topic_TopicSpecified){
 ```
 
 
+The `rismedextract` function arrange the search result obtained from `searchF` function into data frame that we could perform further analysis. 
+
+If you were to reproduce this study using the author's original data, *do no run this code chunk*. 
+If you were to replicate this study by collecting your own data, *please run this code chunk*. Because how the pubmed database has changed their way of naming the variables of article metadata, to retrieve the title of the journal that an article is published in, `Journal = title(records)` in the original code is changed to `Journal = ISOAbbreviation(records)`. 
+
 ```{r arrange new search result into dataframe}
-# only use when getting your own results
+
 rismedextract <- function(records){
+  
   pubmed_data_full <- data.frame('PMID'=as.character(PMID(records)),
                                  'DayAccepted' = DayAccepted(records),
                                  'MonthAccepted' = MonthAccepted(records),
@@ -54,22 +81,31 @@ rismedextract <- function(records){
                                  'DayReceived' = DayReceived(records),
                                  'MonthReceived' = MonthReceived(records),
                                  'YearReceived' = YearReceived(records),
-                                 'Journal' = ISOAbbreviation(records), # Note the change here from title to ISO Abbreviation
+                                 'Journal' = ISOAbbreviation(records), # Changed here from "title" to "ISO Abbreviation"
                                  'PublicationStatus' = PublicationStatus(records),
                                  'Country' = Country(records),
                                  'Language' = Language(records)
                 
   )
+  # organize the accepted and received date
   pubmed_data_full <- pubmed_data_full %>%
     mutate(YMD_Accepted = ymd(paste(YearAccepted,MonthAccepted, DayAccepted))) %>%
     mutate(YMD_Received = ymd(paste(YearReceived,MonthReceived, DayReceived))) 
+  
   return(pubmed_data_full)
 }
+
 ```
 
 
+The `rismedextract_rp` function arrange the loaded original result into data frame that we could perform further analysis.
+
+If you were to reproduce this study using the author's original data, *please run this code chunk*. While the author-provided data is already in a CSV format, we still need to arrange it into the format suitable for our analysis later. 
+If you were to replicate this study by collecting your own data, *do not run this code chunk*
+
+
 ```{r arrange loaded search result into readable format}
-# only use when loading existing result
+
 rismedextract_rp <- function(records){
   pubmed_data_full <- with(records, data.frame('PMID'= as.character(PMID),
                                                'DayAccepted' = DayAccepted,
@@ -83,18 +119,21 @@ rismedextract_rp <- function(records){
                                                'Country' = Country,
                                                'Language' = Language
                                                ))
+   # organize the accepted and received date
   pubmed_data_full <- pubmed_data_full %>%
   mutate(YMD_Accepted = ymd(paste(YearAccepted,MonthAccepted, DayAccepted))) %>%
   mutate(YMD_Received = ymd(paste(YearReceived,MonthReceived, DayReceived))) 
   return(pubmed_data_full)
 }
+
 ```
 
 
 ```{r calculate the submission to publication time}
+
 sptime <- function(pm){
   
-  pm <- pm[!is.na(pm$YMD_Accepted),]
+  pm <- pm[!is.na(pm$YMD_Accepted),]  # exclude null data 
   pm <- pm[!is.na(pm$YMD_Received),]
   pm <- pm %>%  mutate(InReview =  YMD_Accepted - YMD_Received)
   
@@ -102,10 +141,12 @@ sptime <- function(pm){
   
   return(pm)
 }
+
 ```
 
 
 ```{r calculate the number of authors}
+
 AuthorCountF <- function(x){
   c <- c()
   for (i in 1:length(x)){
@@ -113,6 +154,7 @@ AuthorCountF <- function(x){
   }
   return(c)
 }
+
 ```
 
 
@@ -129,7 +171,8 @@ AffiliationCountF <- function(x){
 ```
 
 
-```{r}
+```{r organize country data}
+
 countryF <- function(x){
   for (i in 1:dim(x)[1]){
     af <- unlist(str_split(x$AU_UN[i], ";"))
@@ -143,6 +186,7 @@ countryF <- function(x){
 
 
 ```{r set the theme for plots}
+
 tema <- theme_bw() + theme( plot.subtitle = element_text(vjust = 1), 
                             plot.caption = element_text(vjust = 1), 
                             panel.grid.major = element_blank(), 
@@ -154,7 +198,6 @@ tema <- theme_bw() + theme( plot.subtitle = element_text(vjust = 1),
                             
 )
 
-
 theme_set(tema)
 
 ```
@@ -164,7 +207,7 @@ theme_set(tema)
 
 ### Reproduction
 
-Run the code below to load the results provided by Homolak and reproduce the original analysis.
+If you were to reproduce the analysis, *run the code below to load the results provided by Homolak and reproduce the original analysis*.
 
 ```{r load-original}
 
@@ -184,72 +227,100 @@ df4<- read.csv(here("data", "raw", "public", "reproduction", "search4pubmedr.csv
 df5<- read.csv(here("data", "raw", "public", "reproduction", "search5pubmedr.csv"))
 
 
-# load rxiv preprint server
-
+# load article data from rxiv preprint server
 json <- fromJSON(file = here("data", "raw", "public", "reproduction", "article_list.json"))
 
-# load scopus
-
+# load article data from scopus
 M <- convert2df(here("data", "raw", "public", "reproduction", "scopus20411.bib"), dbsource = "scopus", format = "bibtex")
-
 
 ```
 
 
-```{r}
+```{r pre-process-original}
+
+# process pubmed data into proper data frame 
 pm1 <- rismedextract_rp(records1)
 pm2 <- rismedextract_rp(records2)
 pm3 <- rismedextract_rp(records3)
 pm4 <- rismedextract_rp(records4)
 pm5 <- rismedextract_rp(records5)
-```
 
-
-```{r}
+# set up a data frame for the preprint json file
 dfrxiv <- data.frame("rxiv_date" = c(NA), "injournal" = c(NA), "rxiv_site" = c(NA), 
                  "J_received" = c(NA), "J_accepted" = c(NA), "J_published" = c(NA),
                  "journal" = c(NA), "doi" = c(NA))
+
 ```
 
 
 ### Replication 
 
-Run the code below to get the most updated results and replicate the analysis. 
+If you were to replicate this study by collecting your own data, *run the code below to get the most updated results and replicate the analysis*. Please refer to the instructions in previous section to see if the parameter of the `searchF` function needs to be changed. 
 
-```{r}
+If you were to see the replication result of this study, *do not run the code chunk below*. Instead, *jump to code chunk 22 and start loading the data*, but remember to run those functions in the first section above. 
 
+Guide for searching: 
+- The code search for covid-related articles based on the search phrase. It is *expected* that the result we get by doing our own search will be very different from the original result given that more covid articles are published in the time between. Hence, please be mindful that if you were to replicate the study, you would get different result almost every time you run the code.
+
+- Each search has a different focus based on the search phrase. In particular, search 3 looks for covid-related articles; search 4 looks for all articles before covid outbreak, search 5 looks for all non-covid articles during the same time period specified in search 3. 
+
+- All searches are performed twice, once usnig the RISmed pacakge, and the other using the pubmedR package. Both fetch data from the same database, but the data being downloaded is a bit different. We need data from both of the two searches for our analysis. 
+
+- You do not need an API do download article metadata from pubmed, please do not attempt to fill the API parameter.
+
+_ If you wish to do your own search, do not forget to change the search parameters, especially the "date" in search 3,4,5. 
+
+_ The code for searching articles might take a while to run, please be patient. 
+
+- The data obtained from the search needs to be pre-processed into proper data frame and saved for analysis. *Please run the following two code chunks after the five searches as well.* 
+
+**IMPORTANT**: When I was doing my search, the first search was supposed to return *167363* articles, the second search *204112*, the third search *7123*, the fourth search *14390*, the fifth search *19190*. However, because the `searchF` only allows for 10,000 searches in maximum and that search 2 and 3 always report a "subscript out of bound error" even if using 9999 as the number of searches to be retrieved, the replication study here is a compromise. That is to say, search 1,4,5 only give us the 9999 most recent covid articles and 2,3 give us the 4000 most recent ones. The number 4000 was chosen because in the number of articles returned from search 2 and 3 in the original study is close to 4000. To allow for better comparison between the original and replication study, let's stick with 4000 at this point. 
+
+
+```{r search 1}
+
+# search phrase 
 search1 <- '(COVID-19) AND (Case Reports[Publication Type] OR English Abstract[Publication Type] OR Guideline[Publication Type] OR Journal Article[Publication Type] OR Multicenter Study[Publication Type] OR Review[Publication Type])'
 
+# RISsmed search
 search1atime <- Sys.time()
-records1 <- searchF(search1) # 167363
+records1 <- searchF(search1) # 167363 articles
 
-pubmed1 <- pmApiRequest(search1, limit=8000, api_key = NULL) ## insert API key
+# pubmedR search
+pubmed1 <- pmApiRequest(search1, limit=8000, api_key = NULL) 
 df1 <- pmApi2df(pubmed1, format = "bibliometrix")
+
 ```
 
-4000
-```{r}
 
+```{r search 2}
+
+# search phrase
 search2 <- 'COVID-19'
 
+# RISsmed search
 search2atime <- Sys.time()
-records2 <- searchF(search2) #204112
+records2 <- searchF(search2) # 204112 articles
 
+# pubmedR search
 search2btime <- Sys.time()
-pubmed2 <- pmApiRequest(search2, limit=8000, api_key = NULL) ## insert API key
+pubmed2 <- pmApiRequest(search2, limit=8000, api_key = NULL) 
 df2 <- pmApi2df(pubmed2, format = "bibliometrix")
 
 ```
 
 
-```{r}
 
+```{r search 3}
+
+# search phrase
 search3 <- '("2019/12/01"[Date - Publication] : "2021/12/12"[Date - Publication]) AND (COVID-19) AND ("International journal of antimicrobial agents"[Journal] OR "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases"[Journal] OR "Journal of clinical medicine"[Journal] OR "Journal of Korean medical science"[Journal] OR "Journal of medical virology"[Journal] OR "Journal of microbiology, immunology, and infection = Wei mian yu gan ran za zhi"[Journal] OR "Journal of the American Academy of Dermatology"[Journal] OR "Lancet (London, England)"[Journal] OR "The Journal of hospital infection"[Journal] OR "The Journal of infection"[Journal] OR "The Lancet. Infectious diseases"[Journal] OR "The Lancet. Public health"[Journal] OR "The Lancet. Respiratory medicine"[Journal] OR "Travel medicine and infectious disease"[Journal])'
 
+# RISsmed search
 search3atime <- Sys.time()
-records3 <- searchF(search3) #7123
+records3 <- searchF(search3) # 7123 articles
 
-
+# pubmedR search
 search3btime <- Sys.time()
 pubmed3 <- pmApiRequest(search3, limit=8000, api_key = NULL) ## insert API key
 df3 <- pmApi2df(pubmed3, format = "bibliometrix")
@@ -257,12 +328,16 @@ df3 <- pmApi2df(pubmed3, format = "bibliometrix")
 ```
 
 
-```{r}
+```{r search 4}
 
+# search phrase
 search4 <- '("2017/12/01"[Date - Publication] : "2019/11/30"[Date - Publication]) AND ("International journal of antimicrobial agents"[Journal] OR "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases"[Journal] OR "Journal of clinical medicine"[Journal] OR "Journal of Korean medical science"[Journal] OR "Journal of medical virology"[Journal] OR "Journal of microbiology, immunology, and infection = Wei mian yu gan ran za zhi"[Journal] OR "Journal of the American Academy of Dermatology"[Journal] OR "Lancet (London, England)"[Journal] OR "The Journal of hospital infection"[Journal] OR "The Journal of infection"[Journal] OR "The Lancet. Infectious diseases"[Journal] OR "The Lancet. Public health"[Journal] OR "The Lancet. Respiratory medicine"[Journal] OR "Travel medicine and infectious disease"[Journal])'
-search4atime <- Sys.time()
-records4 <- searchF(search4) # 14390
 
+# RISsmed search
+search4atime <- Sys.time()
+records4 <- searchF(search4) # 14390 articles
+
+# pubmedR search
 search4btime <- Sys.time()
 pubmed4 <- pmApiRequest(search4, limit=5000, api_key = NULL) ## insert API key
 df4 <- pmApi2df(pubmed4, format = "bibliometrix")
@@ -270,14 +345,17 @@ df4 <- pmApi2df(pubmed4, format = "bibliometrix")
 ```
 
 
-```{r}
+```{r search 5}
 
+# search phrase
 search5 <- '("International journal of antimicrobial agents"[Journal] OR "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases"[Journal] OR "Journal of clinical medicine"[Journal] OR "Journal of Korean medical science"[Journal] OR "Journal of medical virology"[Journal] OR "Journal of microbiology, immunology, and infection = Wei mian yu gan ran za zhi"[Journal] OR "Journal of the American Academy of Dermatology"[Journal] OR "Lancet (London, England)"[Journal] OR "The Journal of hospital infection"[Journal] OR "The Journal of infection"[Journal] OR "The Lancet. Infectious diseases"[Journal] OR "The Lancet. Public health"[Journal] OR "The Lancet. Respiratory medicine"[Journal] OR "Travel medicine and infectious disease"[Journal]) AND ("2019/12/01"[Date - Publication] : "2021/12/12"[Date - Publication]) NOT (COVID-19)'
 
+# RISsmed search
 search5atime <- Sys.time()
 records5 <- searchF(search5)
 
-search5btime <- Sys.time() # 19190
+# pubmedR search
+search5btime <- Sys.time() # 19190 articles
 pubmed5 <- pmApiRequest(search5, limit=9999, api_key = NULL) ## insert API key
 df5 <- pmApi2df(pubmed5, format = "bibliometrix")
 
@@ -285,16 +363,19 @@ df5 <- pmApi2df(pubmed5, format = "bibliometrix")
 ```
 
 
-```{r}
+```{r pre-process-replication}
+
 pm1 <- rismedextract(records1)
 pm2 <- rismedextract(records2)
 pm3 <- rismedextract(records3)
 pm4 <- rismedextract(records4)
 pm5 <- rismedextract(records5)
+
 ```
 
 
-```{r}
+```{r save replication data}
+
 write.csv(pm1, here("data", "raw", "public", "replication", "search1rismed.csv"))
 write.csv(pm2, here("data", "raw", "public", "replication", "search2rismed.csv"))
 write.csv(pm3, here("data", "raw", "public", "replication", "search3rismed.csv"))
@@ -306,31 +387,53 @@ write.csv(df2, here("data", "raw", "public", "replication", "search2pubmedr.csv"
 write.csv(df3, here("data", "raw", "public", "replication", "search3pubmedr.csv"))
 write.csv(df4, here("data", "raw", "public", "replication", "search4pubmedr.csv"))
 write.csv(df5, here("data", "raw", "public", "replication", "search5pubmedr.csv"))
-```
 
--- Add information on running python script, mention how the biorxiv api works
-
-```{r}
-json <- fromJSON(file = here("data", "raw", "public", "replication", "article_list.json"))
 ```
 
 
-```{r}
+If you were to replicate the original study as much as possible, you also need need data from the Rxiv preprint server. In the original analysis, Homolak wrote their own python script to download the author data and article data as json files that could be imported into R for analysis. Yet, to successfully run their python code requires us to take an extra few steps to set up the environment on our own computer and perhaps a couple of modifications  to the author's original python code. If you are using a Mac OS as I do, please refer to the instruction markdown file, please follow the instructions in this markdown file titled `python_instructions`. After running the python code, load the json file into R and set up a data frame for it. 
+
+Instruction file path: *procedure/code/python_instruction.md*
+
+Python code (already modified) path: *procedure/code/covid_academic.py*
+
+**IMPORTANT**: The API summary for the collection of COVID-19 SARS-CoV-2 preprints from medRxiv and bioRxiv that is linked in the author's python code (http://connect.biorxiv.org/relate/collection_json.php?grp=181) now only outputs metadata for the 100 most recent papers in the collection. As such, using this API now does not ensure a full replication of the original study. However, I have developed ways to make use of the data of the 100 articles in this replication study. This will be elaborated below. For now, just load the data. 
+
+```{r load preprint replication}
+
+json <- fromJSON(file = here("data", "raw", "public", "replication", "article_list.json")) 
+# make sure to replace the file path if you are saving the output file else where on your local computer
+
+```
+
+
+```{r prepare preprint replication}
+
 dfrxiv <- data.frame("title" = c(NA),"rxiv_date" = c(NA), "injournal" = c(NA), "rxiv_site" = c(NA), 
                  "J_received" = c(NA), "J_accepted" = c(NA), "J_published" = c(NA),
-                 "journal" = c(NA), "doi" = c(NA), "abstract" = c(NA)) # new addition
+                 "journal" = c(NA), "doi" = c(NA), "abstract" = c(NA)) # also extract the data for "abstract"
+
 ```
 
--- Add information on searching on scopus
 
-```{r}
+**A final note on obtaining data**: the author also searched for data on Scopus. However, since the ways in which they did the search is poorly documented in the original paper, we do not know anything about their methodology except for their search phrase. Although I tried to replicate their search as much as possible, the results I obtained is not satisfying. Thus, this part of the research is not replicable at this point yet. The following steps only describes the I took to search for the data on Scopus, *you may try it on your own or simply skip this section.*
+
+- *Sign into Scopus* and open advance search: https://www.scopus.com/search/form.uri?display=advanced
+- *Enter query* : COVID-19 or “COVID19” or “COVID” or “severe acute respiratory syndrome coronavirus 2” or “2019-nCoV” or “2019nCoV” or “SARS-CoV-2” or “SARS-CoV2” or “SARS2” or “coronavirus disease 2019” or “coronavirus disease-19”
+- *Select all articles* and *export as BibTex*. 
+
+
+```{r load data from scopus}
+
 M <- convert2df(here("data", "raw", "public", "replication", "scopus.bib"), dbsource = "scopus", format = "bibtex")
+# make sure to replace/check the file path if you are saving the output file else where on your local computer
+
 ```
 
+Alternatively, *run the code below to load the data and see my replication result*. 
 
-Alternatively, run the code below to load existing data and see this version of replication. 
+```{r load replication data}
 
-```{r}
 # load article data fetched from pubmed using RISmed package
 records1<- read.csv(here("data", "raw", "public", "replication", "search1rismed.csv"))
 records2<- read.csv(here("data", "raw", "public", "replication", "search2rismed.csv"))
@@ -353,34 +456,42 @@ json <- fromJSON(file = here("data", "raw", "public", "replication", "article_li
 
 # load
 M <- convert2df(here("data", "raw", "public", "replication", "scopus.bib"), dbsource = "scopus", format = "bibtex")
+
 ```
 
 
 ## Data preparation
 
+Please run all code chunks in this section to prepare for analysis. 
+
 ### SP time
 
 ```{r submission to publication time}
+
 pm1sp <- sptime(pm1)
 pm2sp <- sptime(pm2)
 pm3sp <- sptime(pm3)
 pm4sp <- sptime(pm4)
 pm5sp <- sptime(pm5)
+
 ```
 
 
 ### Author count
 
-```{r count the number of a}
+```{r count the number of authors}
+
 au1 <- AuthorCountF(df1$AU)
 au2 <- AuthorCountF(df2$AU)
 au3 <- AuthorCountF(df3$AU)
 au4 <- AuthorCountF(df4$AU)
 au5 <- AuthorCountF(df5$AU)
+
 ```
 
 
-```{r}
+```{r count the number of authors for jounral articles only}
+
 x <- df3 %>% 
   filter(DT == "JOURNAL ARTICLE")
 au3A <- AuthorCountF(x$AU)
@@ -392,21 +503,25 @@ au4A <- AuthorCountF(y$AU)
 z <- df5 %>% 
   filter(DT == "JOURNAL ARTICLE")
 au5A <- AuthorCountF(z$AU)
+
 ```
 
 
 ### Affiliation count
 
-```{r}
+```{r count the number of affiliations}
+
 af1 <- AffiliationCountF(df1$AU_UN)
 af2 <- AffiliationCountF(df2$AU_UN)
 af3 <- AffiliationCountF(df3$AU_UN)
 af4 <- AffiliationCountF(df4$AU_UN)
 af5 <- AffiliationCountF(df5$AU_UN)
+
 ```
 
 
-```{r}
+```{r count the number of affiliations only for journal articles}
+
 x <- df3 %>% 
   filter(DT == "JOURNAL ARTICLE")
 af3A <- AffiliationCountF(x$AU_UN)
@@ -418,6 +533,7 @@ af4A <- AffiliationCountF(y$AU_UN)
 z <- df5 %>% 
   filter(DT == "JOURNAL ARTICLE")
 af5A <- AffiliationCountF(z$AU_UN)
+
 ```
 
 
@@ -425,28 +541,47 @@ af5A <- AffiliationCountF(z$AU_UN)
 
 ### Accepted-received dates
 
-```{r}
+Visualize the date and the number of articles accepted/received using data from the second search. 
+Remember to adjust the parameters for the time period to be visualized in the plot. 
+Many parameters in the replication study needs to be replaced to fit the context of the analysis. If you wish to reproduce the analysis, you may refer to the original code from the author at *procedure/code/COVID sci resp FINAL.R*
+Places where certain parameters are different from the original code will be specified. 
+
+```{r plot accepted-received dates}
+
 # date and number of article accepted
 ggplot(pm2sp) + 
     geom_bar(aes(x = YMD_Accepted), inherit.aes = FALSE, fill = "Red" ,color = "Red", alpha = 0.4) + 
-    scale_x_date(limits = c(ymd("2021-09-10"),ymd("2021-12-10"))) + 
+    scale_x_date(limits = c(ymd("2021-09-10"),ymd("2021-12-10"))) + # remember to change the date 
     xlab("Date Accepted") + 
     ylab("Count") 
 
 # date and number of article received 
 ggplot(pm2sp) + 
     geom_bar(aes(x = YMD_Received), inherit.aes = FALSE, fill = "Blue", color = "Blue", alpha = 0.4) + 
-    scale_x_date(limits = c(ymd("2021-09-10"),ymd("2021-12-10"))) + 
+    scale_x_date(limits = c(ymd("2021-09-10"),ymd("2021-12-10"))) + # change the date here as well
     xlab("Date Received") + 
     ylab("Count")
+
 ```
+
 ### Language
 
-```{r}
+At the time when the replication study was conducted, more articles in different languages have been published.
+
+If you wish to do your own replication analysis, *remember to change the labels for language name*.
+If you were to reproduce the original analysis, *change the language labels as well by referring to the author's original code.* 
+
+```{r plot language}
+
 languageP <- function(pm){
   pm$Language <- plyr::revalue(pm$Language, 
-                  c("chi"="Chinese", "eng"="English", "fre" = "French", "ger" = "German", "ita" = "Italian", "spa" = "Spanish", "por" = "Portuguese", "tur" = "Turkish", "ice" = "Icelandic"))
-  pm %>%  ggplot(aes(x = Language, fill = Language)) + geom_bar() + geom_text(aes(label =..count..), stat = "count") + coord_flip()}
+                  c("chi"="Chinese", "eng"="English", "fre" = "French", "ger" = "German", "ita" = "Italian", "spa" = "Spanish", "por" = "Portuguese", "tur" = "Turkish", "ice" = "Icelandic", "rus" = "Russian", "pol" = "Polish", "jpn" = "Japanese", "dut" = "Dutch", "gre" = "Greek", "dan" = "Danish", "hun" = "Hungary")) # change language labels here
+  pm %>%  
+    ggplot(aes(x = Language, fill = Language)) + 
+    geom_bar() + 
+    scale_color_brewer(palette = 2) + 
+    geom_text(aes(label =..count..), stat = "count") + 
+    coord_flip()}
 
 
 languageP(pm2)
@@ -454,8 +589,11 @@ languageP(pm2)
 
 ### Language and country
 
-```{r}
-# no longer able to run for missing country data
+If you were to reproduce this study using the author's original data, *please run this code chunk*. 
+If you have loaded my replication data, *do not run this code chunk*. The data obtained are missing country data and this code chunk will report an error. 
+
+```{r plot language and country}
+
 pmx <- pm2
 pmx$Language <- plyr::revalue(pmx$Language, 
                              c("chi"="Chinese", "eng"="English", "fre" = "French", "ger" = "German", "ita" = "Italian", "spa" = "Spanish", "por" = "Portuguese", "tur" = "Turkish", "ice" = "Icelandic"))
@@ -463,11 +601,17 @@ pmx$CountryCount <- table(pmx$Country)[pmx$Country]
 
 ggplot(pmx, aes(x=reorder(Country, CountryCount), fill = Language, order=CountryCount)) + geom_bar() + coord_flip() +
   scale_fill_simpsons()
+
 ```
 
 ### Submission to publication
 
-```{r}
+Visualize the submission to publication time for covid journals, non-covid journals, and journals published before covid based on the third, fourth, and fifth search. 
+
+*Load the following code chunks anyway*.
+
+```{r plot submission to publication time}
+
 pm3sp %>% 
   filter(JournalCount > 15) %>%
   ggplot(aes(x = Journal, y = InReview, fill = Journal)) + 
@@ -488,7 +632,7 @@ pm4sp %>%
   ylab("SP time [days]") + theme(axis.title.y = element_blank()) + 
   scale_x_discrete(labels = function(x) str_wrap(x, width = 50)) + 
   scale_y_continuous(limits = c(0,365)) + scale_fill_rickandmorty(alpha = 0.7) +
-  labs(title = "12/18-4/19")
+  labs(title = "2017-2019")
 
 pm5sp %>% 
   filter(JournalCount > 15) %>%
@@ -500,9 +644,11 @@ pm5sp %>%
   scale_x_discrete(labels = function(x) str_wrap(x, width = 50)) + 
   scale_y_continuous(limits = c(0,365)) + scale_fill_rickandmorty(alpha = 0.7)+
   labs(title = "NOT COVID-19")
+
 ```
 
-```{r summary statistics for publication time}
+```{r compute summary statistics for publication time}
+
 count <- pm1sp %>%
   group_by(Journal) %>%
   summarise(count = n())
@@ -513,12 +659,18 @@ summary_sp <- pm1sp %>%
   left_join(count, by = "Journal") %>% 
   mutate(perc = n / count * 100)
 colnames(summary_sp) <-  c("Journal", "Peer Review < 24h", "Total Article count", "Percentage")
+
 ```
 
 
 ### Affiliation Count
 
-```{r}
+Visualize the number of affiliations for all publication types and original research papers. 
+
+*Load the following code chunks anyway*.
+
+```{r plot affiliation count for all publication types}
+
 AffiliationCount <- rbind(data.frame("AffiliationCount" = af3, "Time" = "COVID-19"),
                           data.frame("AffiliationCount" = af5, "Time" = "NOT COVID-19"),
                           data.frame("AffiliationCount" = af4, "Time" = "Y18/19"))
@@ -533,7 +685,8 @@ ggplot(AffiliationCount, aes(x = AffiliationCount, fill = Time, color = Time)) +
 ```
 
 
-```{r}
+```{r plot affiliation count for all original research papers}
+
 AffiliationCountA <- rbind(data.frame("AffiliationCount" = af3A, "Time" = "COVID-19"),
                            data.frame("AffiliationCount" = af4A, "Time" = "Y18/19"),
                            data.frame("AffiliationCount" = af5A, "Time" = "NOT COVID-19"))
@@ -544,9 +697,11 @@ ggplot(AffiliationCountA, aes(x = AffiliationCount, fill = Time, color = Time)) 
   scale_fill_startrek() + 
   xlab("Affiliation Count Distribution") +
   labs(title = "Original Research Papers")
+
 ```
 
-```{r summary statistics}
+```{r summary statistics-affiliation}
+
 AffiliationCount %>%
   group_by(Time) %>%
   summarise(N = n(), median = median(AffiliationCount), iqr = IQR(AffiliationCount))
@@ -554,11 +709,17 @@ AffiliationCount %>%
 AffiliationCountA %>%
   group_by(Time) %>%
   summarise(N = n(), median = median(AffiliationCount), iqr = IQR(AffiliationCount))
+
 ```
 
 ### Author Count
 
-```{r}
+Visualize the number of authors for all publication types and original research papers. 
+
+*Load the following code chunks anyway*.
+
+```{r plot author counts for all publication types}
+
 AuthorCount <- rbind(data.frame("AuthorCount" = au3, "Time" = "COVID-19"),
                      data.frame("AuthorCount" = au4, "Time" = "Y18/19"),
                      data.frame("AuthorCount" = au5, "Time" = "NOT COVID-19"))
@@ -569,10 +730,12 @@ ggplot(AuthorCount, aes(x = AuthorCount, fill = Time, color = Time)) +
   scale_fill_startrek() +
   xlab("Author Count Distribution") +
   labs("All Publication Type")
+
 ```
 
 
-```{r}
+```{r plot author counts for original research papers only}
+
 AuthorCountA <- rbind(data.frame("AuthorCount" = au3A, "Time" = "COVID-19"),
                       data.frame("AuthorCount" = au4A, "Time" = "Y18/19"),
                      data.frame("AuthorCount" = au5A, "Time" = "NOT COVID-19"))
@@ -583,10 +746,11 @@ ggplot(AuthorCountA, aes(x = AuthorCount, fill = Time, color = Time)) +
   scale_fill_startrek() +
   xlab("Author Count Distribution")+
   labs("Original Research Papers")
+
 ```
 
 
-```{r}
+```{r summary statistics-authors}
 AuthorCount %>%
   group_by(Time) %>%
   summarise(N = n(), median = median(AuthorCount), iqr = IQR(AuthorCount))
@@ -596,8 +760,14 @@ AuthorCountA %>%
   summarise(N = n(), median = median(AuthorCount), iqr = IQR(AuthorCount))
 ```
 
+### Publication status 
 
-```{r}
+Visualize publication status for both covid articles and non-covid articles published at the same period of time based on the third and fifth search. 
+
+*Load the following code chunks anyway*.
+
+```{r plot publication status}
+
 pubstatus <- rbind(
   data.frame("PubStatus" = pm3$PublicationStatus, "Time" = "COVID-19"),
   data.frame("PubStatus" = pm5$PublicationStatus, "Time" = "NOT COVID-19")
@@ -614,11 +784,20 @@ ggplot(pubstatus, aes(x = Time, fill = PubStatus)) +
   scale_fill_jco() + 
   scale_y_continuous(labels = scales::percent) +
   theme(axis.title = element_blank(), legend.title = element_blank(), legend.position = "top", legend.direction = "horizontal")
+
 ```
 
-### Jounral publication
+### Preprints analysis
 
-```{r}
+Read the json file that contains data on preprint articles into a data frame and visualize whether they have been published in journal or not. 
+
+If you were to reproduce this study, *please run both code chunks and do not proceed to content analysis after that*. 
+
+If you have loaded my replication data, *please only run the first code chunk and proceed to the following content analysis*. Because the API summary now only allows us to download 100 most recent articles, the amount of data is insufficient for us to re-create the figure equivalent to that of in the original research. 
+
+
+```{r read json file into a dataframe }
+
 for (i in json){
   if(is.null(i$journal_date_received)){
     NA
@@ -633,10 +812,16 @@ for (i in json){
                                      "J_published" = if(is.null(i$journal_date_published)){NA} else { i$journal_date_published },
                                      "journal" = if(is.null(i$journal)){NA} else { i$journal },
                                      "doi" = if(is.null(i$journal_doi)){NA} else { i$journal_doi },
-                                     "abstract" = i$abstract)) # new addition
+                                     "abstract" = i$abstract)) 
+                                      # new addition: include data on the abstract of articles
+                                      # do not include that if reproducing the study
 }
+```
 
-# no longer able to run
+
+```{r journal publication}
+
+# no longer able to run for replication
 dfrxiv<- dfrxiv[-1,]
 
 dfrxiv$rxiv_date <- lubridate::ymd(dfrxiv$rxiv_date)
@@ -644,23 +829,191 @@ dfrxiv$rxiv_date <- lubridate::ymd(dfrxiv$rxiv_date)
 dfrxiv$injournal <- factor(dfrxiv$injournal)
 dfrxiv$injournal <- plyr::revalue(dfrxiv$injournal, 
                              c("TRUE"="Published in Journal", "FALSE"="Not Published in Journal"))
-```
 
-
-```{r}
-# no longer able to run
 ggplot(dfrxiv, aes(x = rxiv_date, fill = injournal)) + geom_bar() + 
   scale_x_date(limits = c(ymd("2021-12-01"), NA)) + scale_fill_startrek() +
   theme(legend.title = element_blank(), legend.position = "top", legend.direction = "horizontal") + xlab("Date") + ylab("Count")
+
 ```
 
-Consider text analysis here
+### Content analysis for preprint -- word frequency 
 
+To make fully use of the limited preprint data that we are able to get, we could perform a content analysis on the words in the title and abstract of each article to see what kinds of topics are researchers interested in given the current covid situation! The first part of the content analysis focused graphing the most frequently-occured word in article title & abstract. 
+
+*Only run the following code chunks if you have loaded my replication data*.
+
+
+```{r select title and abstract}
+
+preprint_title <- dfrxiv %>% 
+  select(title)
+
+preprint_abstract <- dfrxiv %>% 
+  select(abstract)
+  
+```
+
+```{r seperate text into individual words}
+
+preprint_title <- preprint_title %>% unnest_tokens(word, title)
+preprint_abstract <- preprint_abstract %>% unnest_tokens(word, abstract)
+
+```
+
+
+```{r exclude stop words }
+
+data("stop_words")
+
+stop_words <- stop_words %>%
+  add_row(word = "sars", lexicon = "Search") %>%
+  # also include various covid keywords 
+  add_row(word = "covid", lexicon = "Search") %>%
+  add_row(word = "cov", lexicon = "Search") %>% 
+  add_row(word = "19", lexicon = "Search") %>% 
+  add_row(word = "2", lexicon = "Search") 
+
+preprint_title <- anti_join(preprint_title, stop_words, by="word")
+preprint_abstract <- anti_join(preprint_abstract, stop_words, by="word")
+
+```
+
+
+```{r word frequency in article title }
+
+preprint_title %>%
+  count(word, sort = TRUE) %>%
+  slice_head(n = 15) %>%
+  mutate(word = reorder(word, n)) %>%
+  
+  ggplot(aes(x = word, y = n)) +
+  geom_col(fill = "#DA70D6") +
+  xlab(NULL) +
+  coord_flip() +
+  labs(
+    x = "Count",
+    y = "Unique words",
+    title = "Count of unique words found in title"
+  ) 
+
+```
+
+
+```{r word frequency in article abstract}
+
+preprint_abstract %>%
+  count(word, sort = TRUE) %>%
+  slice_head(n = 15) %>%
+  mutate(word = reorder(word, n)) %>%
+  
+  ggplot(aes(x = word, y = n)) +
+  geom_col(fill = "#9370DB") +
+  xlab(NULL) +
+  coord_flip() +
+  labs(
+    x = "Count",
+    y = "Unique words",
+    title = "Count of unique words found in abstract"
+  )
+
+```
+
+### Content analysis for preprint -- topic modelling 
+
+The second part of the content analysis focuses on natural language modelling (NLP). The topic modelling I am doing here refers to the NLP task of identifying automatically identifying major themes in a text, usually by identifying informative words. For more information, see https://www.kaggle.com/rtatman/nlp-in-r-topic-modelling. 
+
+*Again, do not run the code if you were to reproduce the original study*.  
+
+
+```{r select only the abstract of article and filter the null value}
+
+abstract <- dfrxiv %>% 
+  select(abstract)
+
+abstract <- abstract %>% 
+  filter(!is.na(abstract))
+
+```
+
+
+```{r function to get and plot the most informative terms by a specificed number of topics, using LDA}
+
+topic_cat <- function(text, num_topics = 2)
+{    
+    # create a corpus (type of object expected by tm) and document term matrix
+    Corpus <- Corpus(VectorSource(text)) 
+    DTM <- DocumentTermMatrix(Corpus) # get the count of words/document
+
+    # remove any empty rows in our document term matrix 
+    unique_indexes <- unique(DTM$i) # get the index of each unique value
+    DTM <- DTM[unique_indexes,] # get a subset of only those indexes
+    
+    # preform LDA & get the words/topic in a tidy text format
+    lda <- LDA(DTM, k = num_topics, control = list(seed = 1234))
+    topics <- tidy(lda, matrix = "beta")
+
+    # get the top ten terms for each topic
+    top_terms <- topics  %>% 
+      group_by(topic) %>% # treat each topic as a different group
+      top_n(10, beta) %>% # get the top 10 most informative words
+      ungroup() %>% 
+      arrange(topic, -beta) 
+
+    # plot the top ten terms for each topic in order
+    top_terms %>% 
+        mutate(term = reorder(term, beta)) %>% # sort terms by beta value 
+        ggplot(aes(term, beta, fill = factor(topic))) + # plot beta by theme
+        geom_col(show.legend = FALSE) + 
+        facet_wrap(~ topic, scales = "free") + 
+        labs(x = NULL, y = "Beta") + 
+        coord_flip() + 
+        scale_fill_manual(values = c("#DA70D6", "#87CEFA", "#9370DB"))
+
+}
+```
+
+
+```{r remove stop words in abstracts}
+
+absCorpus <- Corpus(VectorSource(abstract$abstract)) 
+absDTM <- DocumentTermMatrix(absCorpus)
+
+# convert the document term matrix to a tidytext corpus
+absDTM_tidy <- tidy(absDTM)
+
+custom_stop_words <- tibble(word = c("covid", "cov", "sars", "19", "2", "covid-19", "sars-cov-2"))
+
+# remove stopwords
+absDTM_tidy_cleaned <- absDTM_tidy %>% # take our tidy dtm and...
+    anti_join(stop_words, by = c("term" = "word")) %>% # remove English stopwords and...
+    anti_join(custom_stop_words, by = c("term" = "word")) # remove my custom stopwords
+
+
+# reconstruct cleaned documents (so that each word shows up the correct number of times)
+cleaned_documents <- absDTM_tidy_cleaned %>%
+    group_by(document) %>% 
+    mutate(terms = toString(rep(term, count))) %>%
+    select(document, terms) %>%
+    unique()
+
+```
+
+
+```{r plot topics}
+
+topic_cat(cleaned_documents$terms, num_topics = 3)
+
+```
 
 ### Single & multiple country publication
 
-Only the first 2000 documents could be exported
-```{r}
+Visualize the proportion of publication that are single or multiple country publication. 
+
+If you were to reproduce the original analysis, *run the fist two code chunks*.
+If you have loaded my replication data, *do not run any of these code chunks*. Scopus only allows us to download 2000 article metadata at this point, and because of the missing documentation of the methods in the original research paper, I have not yet figured out a way to find the data consistent with the author's. Moreoever, the Scopus data I downloaded is missing important country data. 
+
+```{r process scopus data}
+
 M <- M %>%
   filter(DT == "ARTICLE")
 
@@ -673,8 +1026,9 @@ S <- summary(object = results_bib, k = 20, pause = FALSE)
 ```
 
 
-```{r}
-# irreproducible due to lack of data
+```{r plot country publication}
+
+# currently irreproducible due to lack of data
 plot_list <- plot(x = results_bib, k = 10, pause = FALSE)
 
 plot_list$MostProdAuthors + scale_fill_startrek() + theme_bw() +
@@ -690,7 +1044,10 @@ plot_list$MostProdAuthors + scale_fill_startrek() + theme_bw() +
 
 ```
 
-```{r}
+*Do not run the last code chunk, no matter you are reproducing or replicating the analysis*. Here, the author used an app called `biblioshiny` to create the map displaying number of papers per country and collaborations between countries, but no documentation on how to use and access the app has been included in the original research paper and the scopus data used to create this map is currently missing important country information. 
+
+```{r create map}
+
 biblioshiny()
 
 
@@ -700,5 +1057,6 @@ usporedba <- rbind(data.frame("DB" = "rXiv", "N" = dim(dfrxiv)[1]),
 
 usporedbap <- ggplot(usporedba, aes(x = DB, y = N, fill = DB)) + geom_col() + scale_fill_startrek() +
   ylab("Count") + theme(axis.title.x = element_blank(), legend.title = element_blank())
+
 ```
 
