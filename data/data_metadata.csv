@@ -24,4 +24,4 @@ raw/public/replication,search4pubmedr,csv,PubMed,data/metadata/pubmedR.pdf,acqui
 raw/public/replication,search5pubmedr,csv,PubMed,data/metadata/pubmedR.pdf,acquired,12/10/2021
 raw/public/replication,scopus,bib,scopus,data/metadata/scopus.pdf,acquired,12/11/2021
 raw/public/replication,article_list,json,biorxiv,data/metadata/preprint.pdf,acquired,12/11/2021
-raw/public/replication,authorlist,json,biorxiv,data/metadata/preprint.pdf,acquired,12/11/2021
+raw/public/replication,author_list,json,biorxiv,data/metadata/preprint.pdf,acquired,12/11/2021
