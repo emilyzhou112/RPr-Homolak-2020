@@ -430,7 +430,7 @@ M <- convert2df(here("data", "raw", "public", "replication", "scopus.bib"), dbso
 
 ```
 
-Alternatively, *run the code below to load the data and see my replication result*. 
+Alternatively, *run the code below to load the data and see my replication result*. This search was conducted on `Dec-10-2021`.
 
 ```{r load replication data}
 
@@ -729,7 +729,7 @@ ggplot(AuthorCount, aes(x = AuthorCount, fill = Time, color = Time)) +
   theme(axis.title.y = element_blank(), legend.title = element_blank()) + 
   scale_fill_startrek() +
   xlab("Author Count Distribution") +
-  labs("All Publication Type")
+  labs(title = "All Publication Type")
 
 ```
 
@@ -745,7 +745,7 @@ ggplot(AuthorCountA, aes(x = AuthorCount, fill = Time, color = Time)) +
   theme(axis.title.y = element_blank(), legend.title = element_blank()) + 
   scale_fill_startrek() +
   xlab("Author Count Distribution")+
-  labs("Original Research Papers")
+  labs(title = "Original Research Papers")
 
 ```
 

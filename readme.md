@@ -1,14 +1,16 @@
-# Title of Study
+# Reproduction and Replication of COVID-19 Academic Patterns
 
-> Insert names of the original authors in Kedron, P.J. format
+Original author: Homolak, J., Kodvanj, I. & Virag, D.
+
+Original research: Homolak, J., Kodvanj, I. & Virag, D. Preliminary analysis of COVID-19 academic information patterns: a call for open science in the times of closed borders. Scientometrics 124, 2687–2701 (2020). [https://doi.org/10.1007/s11192-020-03587-2](https://link.springer.com/article/10.1007%2Fs11192-020-03587-2)
+
+Reproduced and replicated by: Zhou,E
 
 ## Abstract
 
-> Briefly describe the study. If the study is a reproduction or replication, the full citation of the original study should be included here with digital object identifier (DOI) to the study and, if applicable, any preregistration, code or data repositories. Delete this instruction from the final repository.
+This project intends to reproduce and replicate the study by Homolak et al(2020), which investigates how the scientific community have responded to the COVID-19 pandemic by quantifying the distribution and availability patterns of the academic information related to COVID-19. The aim of the original study is to assess the quality of the information flow and scientific collaboration under the pandemic. Here, the reproduction part of this project is focused on *validating the correctness of Homolak's method, code, and conclusions, fix potential errors, as well as to evaluate/improve the reproducibility of the entire study*. In the replication part of the project, the original data is replaced with the most updated ones to *compare changes in academic patterns over time and seek for further improvements*.
 
 ## Repository Documents
-
-> Link your reports, manuscripts, presentations, publication DOIs, preregistrations, etc. here. Delete this instruction and unused list items from your final repository. Adjust the file names and paths and add additional items as necessary.
 
 - Preregistration: https://osf.io/my_study
 - Publication: https://doi.org/my_study

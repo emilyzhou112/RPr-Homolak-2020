@@ -1,1 +1,30 @@
 ﻿file_path,file_name,title,description,type,date
+results/figures/replication,f1,date-accepted,replication result,png,12/15/2021
+results/figures/replication,f2,date-received,replication result,png,12/15/2021
+results/figures/replication,f3,language,replication result,png,12/15/2021
+results/figures/replication,f4,not covid-19,replication result,png,12/15/2021
+results/figures/replication,f5,2017-2019,replication result,png,12/15/2021
+results/figures/replication,f6,covid-19,replication result,png,12/15/2021
+results/figures/replication,f7,affiliation count for all publication type,replication result,png,12/15/2021
+results/figures/replication,f8,affiliation count for original research paper,replication result,png,12/15/2021
+results/figures/replication,f9,author count for all publication type,replication result,png,12/15/2021
+results/figures/replication,f10,author count for original research paper,replication result,png,12/15/2021
+results/figures/replication,f11,publication type,replication result,png,12/15/2021
+results/figures/replication,f12,title,replication result,png,12/15/2021
+results/figures/replication,f13,abstracts,replication result,png,12/15/2021
+results/figures/replication,f14,topic,replication result,png,12/15/2021
+
+results/figures/reproduction,f1,date-received,reproduction result,png,12/14/2021
+results/figures/reproduction,f2,date-accepted,reproduction result,png,12/14/2021
+results/figures/reprodcution,f3,language,reproduction result,png,12/14/2021
+results/figures/reproduction,f4,country,reproduction result,png,12/14/2021
+results/figures/reproduction,f5,not covid-19,reproduction result,png,12/14/2021
+results/figures/reproduction,f6,year before covid,reproduction result,png,12/14/2021
+results/figures/reproduction,f7,covid-19,reproduction result,png,12/14/2021
+results/figures/reproduction,f8,affiliation count for all publication type,reproduction result,png,12/14/2021
+results/figures/reproduction,f9,affiliation count for original research paper,reproduction result,png,12/14/2021
+results/figures/reproduction,f10,author count for all publication type,reproduction result,png,12/14/2021
+results/figures/reproduction,f11,author count for original research paper,reproduction result,png,12/14/2021
+results/figures/reproduction,f12,publication type,reproduction result,png,12/14/2021
+results/figures/reproduction,f13,publication status,reproduction result,png,12/14/2021
+results/figures/reproduction,f14,country collaboration,reproduction result,png,12/14/2021
