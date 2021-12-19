@@ -1,7 +1,5 @@
----
-layout: page
-title: Reproduction & Replication Analysis of Academic Information Patterns under COVID-19
----
+# Reproduction & Replication Analysis of Academic Information Patterns under COVID-19
+
 
 Emily Zhou, Middlebury College
 
