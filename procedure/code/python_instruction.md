@@ -16,7 +16,7 @@ Created: Fall 2021
 
 2. Download pip, a package management system used to install and manage software packages/libraries written in Python, using the command below directly. These files are stored in a large “on-line repository” termed as Python Package Index (PyPI).
 
-     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+     `curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py`
 
 3. Now execute the downloaded file using below command
 
