@@ -65,7 +65,7 @@ Created: Fall 2021
   
 10. Now we are able to run the code. If using python IDLE, simply hit "RUN", if using terminal:
 
-   `python3 filename.py`
+    `python3 filename.py`
 
 
 ## Helpful resources:
