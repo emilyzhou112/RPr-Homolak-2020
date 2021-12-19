@@ -20,19 +20,19 @@ Created: Fall 2021
 
 3. Now execute the downloaded file using below command
 
-     python3 get-pip.py
+     `python3 get-pip.py`
 
 4. Verify if the pip has been installed correctly by performing a version check on the same
 
-     pip3 --version
+     `pip3 --version`
 
 5. Use the following commands to install the latest version of a module and its dependencies from the Python Package Index(PyPI). In this study, the original author has used the following three:
 
-     pip install python-dateutil
+     `pip install python-dateutil
 
      pip install selenium
 
-     pip install urllib3
+     pip install urllib3`
 
 ## Below are the steps essential to setup geckodriver!!!
 
@@ -42,30 +42,30 @@ Created: Fall 2021
 
 7. Install geckodriver on Mac. GeckoDriver is a web browser engine which is used in many applications developed by Mozilla Foundation and the Mozilla Corporation. GeckoDriver is the link between the tests in Selenium and the Firefox browser. There are engines that allows you pull data from websites.As it seems that the original authors have used the firfox broswer, to fully reproduce the study, let's stick with geckodriver here.These two commands might take a while to run: 
 
-     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
+     `ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
 
-     brew install geckodriver
+     brew install geckodriver`
 
 8. Three lines of code from the original analysis needs to be corrected, simply because geckodriver executable needs to be in PATH
 
-     from webdriver_manager.firefox import GeckoDriverManager
+     `from webdriver_manager.firefox import GeckoDriverManager
      
      from selenium.webdriver.firefox.service import Service
     
-     gecko = webdriver.Firefox(service=Service(GeckoDriverManager().install()))
+     gecko = webdriver.Firefox(service=Service(GeckoDriverManager().install()))`
 
 
 9. Finally, you might run into the error of python reporting: "Unable To Get Local Issuer Certificate In Mac OS". If so,
 
-    Open mac os finder, then click Applications —> Python 3 folder to expand it.
+    `Open mac os finder, then click Applications —> Python 3 folder to expand it.
     
     Double click the Install Certificates command file to run it. It will open another popup terminal window and show command execution output text.
     
-    Close the popup window when the command runs completely successfully. Now run the python code again, the Certificate Verify Failed Error will disappear.
+    Close the popup window when the command runs completely successfully. Now run the python code again, the Certificate Verify Failed Error will disappear.`
   
 10. Now we are able to run the code. If using python IDLE, simply hit "RUN", if using terminal:
 
-    python3 filename.py
+   `python3 filename.py`
 
 
 ## Helpful resources:
