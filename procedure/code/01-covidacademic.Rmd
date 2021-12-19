@@ -10,9 +10,9 @@ output: html_document
 Author: Emily Zhou
 Created: Fall 2021
 
-This project intends to reproduce and replicate the study by Homolak et al(2020), which investigates how the scientific community have responded to the COVID-19 pandemic by quantifying the distribution and availability patterns of the academic information related to COVID-19. The aim of the original study is to assess the quality of the information flow and scientific collaboration under the pandemic. Here, in the reproduction part of this project, I intend to *validate the correctness of Homolak's method, code, and conclusions, fix potential errors, as well as to evaluate/improve the reproducibility of the entire study*. In the replication study, I replaced the original data with the most updated ones and ran the analysis to *compare changes in academic patterns over time*. 
+This project intends to reproduce and replicate the study by Homolak et al(2020), which investigates how the scientific community have responded to the COVID-19 pandemic by quantifying the distribution and availability patterns of academic information related to COVID-19. The aim of the original study is to assess the quality of information flow and scientific collaboration under the pandemic. Here, in the reproduction part of this project, I intend to *validate the correctness of Homolak's method, code, and conclusions, fix potential errors, as well as to evaluate/improve the reproducibility of the entire study*. In the replication study, I replaced the original data with the most updated ones and ran the analysis to *compare changes in academic patterns over time*. 
 
-This R markdown document contains the code for both reproduction and replication study. **Please read the instructions carefully before running any code chunks**. The instructions will give you an idea on which code chunk to run depending on whether you want reproduce or replicate the study. It will also tell you about any modifications you have to make manually to the code if you would like to switch from reproduction study to replication study or vice versa. If not specified in particular, than the code chunk needs to be run anyway. Due to the way Homolak et al have documented their methodology, the differences in the processing environment between computers, and the changing regulations of the websites that we fetch raw data from, the original study is not fully reproducible/replicable. **Please do not run the code chunk that are labeled as "unable to run"**. 
+This R markdown document contains the code for both reproduction and replication study. **Please read the instructions carefully before running any code chunks**. The instructions will give you an idea on which code chunk to run depending on whether you want to reproduce or replicate the study. It will also tell you about any modifications to be made manually to the code if you would like to switch from reproduction to replication study or vice versa. If not specified in particular, then the code chunk needs to be run anyway. Due to the way Homolak et al have documented their methodology, the differences in the processing environment between computers, and the changing regulations of the websites that we fetch raw data from, the original study is not fully reproducible/replicable. **Please do not run the code chunk that are labeled as "unable to run"**. 
 
 
 ## Set up environment
@@ -81,7 +81,7 @@ rismedextract <- function(records){
                                  'DayReceived' = DayReceived(records),
                                  'MonthReceived' = MonthReceived(records),
                                  'YearReceived' = YearReceived(records),
-                                 'Journal' = ISOAbbreviation(records), # Changed here from "title" to "ISO Abbreviation"
+                                 'Journal' = ISOAbbreviation(records), # Changed from "title" to "ISO Abbreviation"
                                  'PublicationStatus' = PublicationStatus(records),
                                  'Country' = Country(records),
                                  'Language' = Language(records)
@@ -260,15 +260,15 @@ If you were to replicate this study by collecting your own data, *run the code b
 If you were to see the replication result of this study, *do not run the code chunk below*. Instead, *jump to code chunk 22 and start loading the data*, but remember to run those functions in the first section above. 
 
 Guide for searching: 
-- The code search for covid-related articles based on the search phrase. It is *expected* that the result we get by doing our own search will be very different from the original result given that more covid articles are published in the time between. Hence, please be mindful that if you were to replicate the study, you would get different result almost every time you run the code.
+- The code searches for covid-related articles based on the search phrase. It is *expected* that the result we get by doing our own search will be very different from the original results given that more covid articles are published in the time between. Hence, please be aware that if you were to replicate the study, you would get different result almost every time you run the code.
 
 - Each search has a different focus based on the search phrase. In particular, search 3 looks for covid-related articles; search 4 looks for all articles before covid outbreak, search 5 looks for all non-covid articles during the same time period specified in search 3. 
 
-- All searches are performed twice, once usnig the RISmed pacakge, and the other using the pubmedR package. Both fetch data from the same database, but the data being downloaded is a bit different. We need data from both of the two searches for our analysis. 
+- All searches are performed twice, once using the `RISmed` pacakge, and the other using the `pubmedR` package. Both fetch data from the same database, but the content is a bit different. We need data from both of the two searches for our analysis. 
 
-- You do not need an API do download article metadata from pubmed, please do not attempt to fill the API parameter.
+- You do not need an API to download article metadata from pubmed, please do not attempt to fill the API parameter.
 
-_ If you wish to do your own search, do not forget to change the search parameters, especially the "date" in search 3,4,5. 
+- If you wish to do your own search, do not forget to change the search parameters, especially the "date" in search 3,4,5. 
 
 _ The code for searching articles might take a while to run, please be patient. 
 
@@ -391,7 +391,7 @@ write.csv(df5, here("data", "raw", "public", "replication", "search5pubmedr.csv"
 ```
 
 
-If you were to replicate the original study as much as possible, you also need need data from the Rxiv preprint server. In the original analysis, Homolak wrote their own python script to download the author data and article data as json files that could be imported into R for analysis. Yet, to successfully run their python code requires us to take an extra few steps to set up the environment on our own computer and perhaps a couple of modifications  to the author's original python code. If you are using a Mac OS as I do, please refer to the instruction markdown file, please follow the instructions in this markdown file titled `python_instructions`. After running the python code, load the json file into R and set up a data frame for it. 
+If you were to replicate the original study as much as possible, you also need need data from the Rxiv preprint server. In the original analysis, Homolak wrote their own python script to download the author data and article data as json files that could be imported into R for analysis. Yet, to successfully run their python code requires us to take an extra few steps to set up the environment on our own computer and perhaps a couple of modifications to the author's original python code. If you are using a Mac OS as I do, please refer to the instruction markdown file, please follow the instructions in this markdown file titled `python_instructions`. After running the python code, load the json file into R and set up a data frame for it. 
 
 Instruction file path: *procedure/code/python_instruction.md*
 
@@ -416,7 +416,7 @@ dfrxiv <- data.frame("title" = c(NA),"rxiv_date" = c(NA), "injournal" = c(NA), "
 ```
 
 
-**A final note on obtaining data**: the author also searched for data on Scopus. However, since the ways in which they did the search is poorly documented in the original paper, we do not know anything about their methodology except for their search phrase. Although I tried to replicate their search as much as possible, the results I obtained is not satisfying. Thus, this part of the research is not replicable at this point yet. The following steps only describes the I took to search for the data on Scopus, *you may try it on your own or simply skip this section.*
+**A final note on obtaining data**: the author also searched for data on Scopus. However, since the ways in which they did the search is poorly documented in the original paper, we do not know anything about their methodology except for their search phrase. Although I tried to replicate their search as much as possible, the results I obtained is not satisfying. Thus, this part of the research is not replicable at this point yet. The following steps only describes the approach I took to search for the data on Scopus, *you may try it on your own or simply skip this section.*
 
 - *Sign into Scopus* and open advance search: https://www.scopus.com/search/form.uri?display=advanced
 - *Enter query* : COVID-19 or “COVID19” or “COVID” or “severe acute respiratory syndrome coronavirus 2” or “2019-nCoV” or “2019nCoV” or “SARS-CoV-2” or “SARS-CoV2” or “SARS2” or “coronavirus disease 2019” or “coronavirus disease-19”
@@ -542,7 +542,7 @@ af5A <- AffiliationCountF(z$AU_UN)
 ### Accepted-received dates
 
 Visualize the date and the number of articles accepted/received using data from the second search. 
-Remember to adjust the parameters for the time period to be visualized in the plot. 
+*Remember to adjust the parameters for the time period* to be visualized in the plot. 
 Many parameters in the replication study needs to be replaced to fit the context of the analysis. If you wish to reproduce the analysis, you may refer to the original code from the author at *procedure/code/COVID sci resp FINAL.R*
 Places where certain parameters are different from the original code will be specified. 
 
